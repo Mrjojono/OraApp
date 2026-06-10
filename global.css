@@ -1,0 +1,150 @@
+@import "tailwindcss/theme.css" layer(theme);
+@import "tailwindcss/preflight.css" layer(base);
+@import "tailwindcss/utilities.css";
+
+@import "nativewind/theme";
+
+@theme {
+  /* ── SURFACE / BACKGROUND ──────────────────────────────
+   * Utilisées pour les fonds et conteneurs
+   */
+  --color-surface: #f6fbef;
+  --color-surface-dim: #d7dcd0;
+  --color-surface-bright: #f6fbef;
+  --color-surface-container-lowest: #ffffff;
+  --color-surface-container-low: #f0f5e9;
+  --color-surface-container: #ebf0e4;
+  --color-surface-container-high: #e5eade;
+  --color-surface-container-highest: #dfe4d8;
+  --color-on-surface: #181d16;
+  --color-on-surface-variant: #424939;
+  --color-inverse-surface: #2d322a;
+  --color-inverse-on-surface: #edf2e7;
+  --color-outline: #727a67;
+  --color-outline-variant: #c1c9b4;
+  --color-surface-tint: #3a6a00;
+
+  /* ── BACKGROUND / ON-BACKGROUND ────────────────────────
+   * --background : fond général de l'écran
+   * --on-background : texte sur fond principal
+   */
+  --color-background: #f6fbef;
+  --color-on-background: #181d16;
+
+  /* ── SURFACE VARIANT ───────────────────────────────────
+   * Utilisé comme alternative à surface-container
+   */
+  --color-surface-variant: #dfe4d8;
+
+  /* ── COULEURS SUPPLÉMENTAIRES ──────────────────────────
+   * --color-surface-white : fond blanc pur pour cartes
+   * --color-forest-depth : texte très foncé, titres
+   * --color-mint-subtle : bordures légères, séparateurs
+   */
+  --color-surface-white: #ffffff;
+  --color-forest-depth: #0E2100;
+  --color-mint-subtle: #E2EBD6;
+
+  /* ── PRIMARY (Wise Lime) ───────────────────────────────
+   * Utilisation : actions principales, CTA, succès,
+   *               éléments de marque à forte visibilité
+   * --primary-container : badge, chip, fond de bouton secondaire
+   * --on-primary : texte / icônes sur fond primary
+   * --inverse-primary : primary en mode inversé (dark)
+   */
+  --color-primary: #3a6a00;
+  --color-on-primary: #ffffff;
+  --color-primary-container: #9fe35d;
+  --color-on-primary-container: #376400;
+  --color-inverse-primary: #96d954;
+
+  /* ── SECONDARY (Deep Green) ────────────────────────────
+   * Utilisation : navigation, textes à fort contraste,
+   *               bordures structurelles, titres
+   * --secondary-container : fonds de sections secondaires
+   * --on-secondary : texte sur fond secondary
+   */
+  --color-secondary: #47672d;
+  --color-on-secondary: #ffffff;
+  --color-secondary-container: #c5eba3;
+  --color-on-secondary-container: #4b6c31;
+
+  /* ── TERTIARY (Mauve/Bordeaux) ────────────────────────
+   * Utilisation : accents décoratifs, badges spéciaux,
+   *               éléments de catégorisation
+   * --tertiary-container : fond pour pastilles tertiaires
+   */
+  --color-tertiary: #824d70;
+  --color-on-tertiary: #ffffff;
+  --color-tertiary-container: #ffbce5;
+  --color-on-tertiary-container: #7c476a;
+
+  /* ── ERROR ────────────────────────────────────────────
+   * Utilisation : messages d'erreur, champs invalides,
+   *               alertes destructives
+   * --error-container : fond de toast/badge d'erreur
+   * --on-error : texte sur fond error
+   */
+  --color-error: #ba1a1a;
+  --color-on-error: #ffffff;
+  --color-error-container: #ffdad6;
+  --color-on-error-container: #93000a;
+
+  /* ── PRIMARY FIXED ────────────────────────────────────
+   * Utilisation : états "fixed" ou "sélectionné"
+   *               pour les composants persistants
+   */
+  --color-primary-fixed: #b1f66d;
+  --color-primary-fixed-dim: #96d954;
+  --color-on-primary-fixed: #0e2000;
+  --color-on-primary-fixed-variant: #2b5000;
+
+  /* ── SECONDARY FIXED ──────────────────────────────────
+   * Même usage que primary-fixed mais pour le ton secondaire
+   */
+  --color-secondary-fixed: #c8eea5;
+  --color-secondary-fixed-dim: #acd28c;
+  --color-on-secondary-fixed: #0c2000;
+  --color-on-secondary-fixed-variant: #304f18;
+
+  /* ── TERTIARY FIXED ───────────────────────────────────
+   * Même usage que primary-fixed mais pour le ton tertiaire
+   */
+  --color-tertiary-fixed: #ffd8ed;
+  --color-tertiary-fixed-dim: #f5b3db;
+  --color-on-tertiary-fixed: #350a2a;
+  --color-on-tertiary-fixed-variant: #683658;
+
+  /* ── TYPOGRAPHY ───────────────────────────────────────
+   * Familles : Plus Jakarta Sans (corps/titres),
+   *            Inter (étiquettes/données)
+   * Utilisation en CSS via font-family, et en Tailwind
+   * via les classes font-* étendues
+   */
+  --font-family-sans: "Plus Jakarta Sans", sans-serif;
+  --font-family-mono: "Inter", sans-serif;
+
+  /* ── BORDER RADIUS ────────────────────────────────────
+   * --radius-sm : inputs, chips (4px)
+   * --radius-DEFAULT : boutons, cartes (8px)
+   * --radius-md : conteneurs secondaires (12px)
+   * --radius-lg : grandes cartes, modaux (16px)
+   * --radius-xl : sheets, dialogs (24px)
+   * --radius-full : éléments circulaires
+   */
+  --radius-sm: 0.25rem;
+  --radius-md: 0.75rem;
+  --radius-lg: 1rem;
+  --radius-xl: 1.5rem;
+
+  /* ── SPACING ──────────────────────────────────────────
+   * Basé sur une unité de 8px
+   */
+  --spacing-unit: 8px;
+  --spacing-gutter: 24px;
+
+  /* ── CONTAINER ─────────────────────────────────────────
+   * Largeur max pour les layouts desktop
+   */
+  --container-max-width: 1200px;
+}
