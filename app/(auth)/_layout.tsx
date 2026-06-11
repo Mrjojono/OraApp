@@ -1,11 +1,21 @@
 import { Stack } from "expo-router";
-import { SafeAreaView as RNSafeAreaView } from "react-native-safe-area-context";
-const SafeAreaView = RNSafeAreaView;
 
-export default function RootLayout() {
+export default function AuthLayout() {
   return (
-    <SafeAreaView>
-      <Stack screenOptions={{ headerShown: false }} />
-    </SafeAreaView>
+    <Stack
+      screenOptions={{
+        headerShown: true,
+        headerTitle: "",
+        headerShadowVisible: false,
+        headerStyle: { backgroundColor: "#F6FBEF" },
+        headerTintColor: "#181D16",
+      }}
+    >
+      <Stack.Screen name="orchestration" options={{ headerShown: false }} />
+      <Stack.Screen name="email" options={{ headerShown: false }} />
+      <Stack.Screen name="password" />
+      <Stack.Screen name="otp" />
+      <Stack.Screen name="accountNumber" />
+    </Stack>
   );
 }

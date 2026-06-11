@@ -18,17 +18,26 @@ const OnboardingScreen = () => {
     pressScale: pressSignup,
   } = useAnimation();
 
-  const handleNext = useCallback(() => {
-    if (currentIndex < OnboardingData.length - 1) {
-      pagerRef.current?.setPage(currentIndex + 1);
-    } else {
-      router.replace("/(tabs)");
-    }
-  }, [currentIndex, router]);
+  const handleNext = useCallback(
+    (connect?: string) => {
+      if (currentIndex < OnboardingData.length - 1) {
+        pagerRef.current?.setPage(currentIndex + 1);
+      } else {
+        if (connect && connect === "orchestration-register") {
+          router.replace("/(auth)/orchestration?step=account");
+        } else if (connect && connect === "orchestration-connect") {
+          router.replace("/(auth)/orchestration?step=email");
+        } else {
+          router.replace("/(auth)/email");
+        }
+      }
+    },
+    [currentIndex, router],
+  );
 
   const handleSkip = useCallback(() => {
-    router.replace("/(tabs)");
-  }, [router]);
+    pagerRef.current?.setPage(OnboardingData.length - 1);
+  }, []);
 
   return (
     <View style={{ flex: 1 }}>
@@ -127,7 +136,7 @@ const OnboardingScreen = () => {
         {currentIndex === OnboardingData.length - 1 ? (
           <View style={{ flexDirection: "row", gap: 8, width: "100%" }}>
             <TouchableOpacity
-              onPress={handleSkip}
+              onPress={() => handleNext("orchestration-connect")}
               onPressIn={pressLogin.onPressIn}
               onPressOut={pressLogin.onPressOut}
               style={[
@@ -149,7 +158,7 @@ const OnboardingScreen = () => {
               </Text>
             </TouchableOpacity>
             <TouchableOpacity
-              onPress={handleNext}
+              onPress={() => handleNext("orchestration-register")}
               onPressIn={pressSignup.onPressIn}
               onPressOut={pressSignup.onPressOut}
               style={[
@@ -180,7 +189,7 @@ const OnboardingScreen = () => {
               padding: 12,
               borderRadius: 8,
             }}
-            onPress={handleNext}
+            onPress={() => handleNext("orchestration")}
           >
             <Text style={{ fontSize: 16, fontWeight: "600", color: "#FFFFFF" }}>
               Suivant
