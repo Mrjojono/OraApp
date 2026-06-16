@@ -1,8 +1,23 @@
+import { View, Text } from "react-native";
 import { Tabs } from "expo-router";
+import { Bell } from "lucide-react-native";
 import { tabs, components } from "@/constants/data";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 const tabBar = components.tabBar;
+
+const Header = () => {
+  const insets = useSafeAreaInsets();
+  return (
+    <View
+      style={{ paddingTop: insets.top }}
+      className="flex justify-between border-b border-b-surface-container py-4 px-6 flex-row bg-background"
+    >
+      <Text className="font-bold text-primary text-xl">NUTSUKPUI Joan</Text>
+      <Bell size={24} color="#3A6A00" />
+    </View>
+  );
+};
 
 const tabLayout = () => {
   // eslint-disable-next-line react-hooks/rules-of-hooks
@@ -11,7 +26,8 @@ const tabLayout = () => {
   return (
     <Tabs
       screenOptions={{
-        headerShown: false,
+        header: () => <Header />,
+        headerShown: true,
         tabBarShowLabel: false,
         tabBarStyle: {
           position: "absolute",

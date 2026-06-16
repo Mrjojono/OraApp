@@ -1,3 +1,4 @@
+import { View } from "react-native";
 import { Stack } from "expo-router";
 import { useFonts } from "expo-font";
 import { BebasNeue_400Regular } from "@expo-google-fonts/bebas-neue";
@@ -20,5 +21,9 @@ export default function RootLayout() {
     return null;
   }
 
-  return <Stack screenOptions={{ headerShown: false }} />;
+  return (
+    <View className="bg-background flex-1">
+      <Stack screenOptions={{ headerShown: false }} />
+    </View>
+  );
 }
