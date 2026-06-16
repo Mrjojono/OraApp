@@ -1,12 +1,12 @@
 import { api } from "./api";
-import AsyncStorage from "@react-native-async-storage/async-storage";
+import * as SecureStore from "expo-secure-store";
 import { readAllSms } from "./sms-reader";
 
-const LAST_SYNC_KEY = "@OraApp/lastSyncId";
+const LAST_SYNC_KEY = "lastSyncId";
 const SMS_SYNC_URL = "/sms/sync";
 
 async function getLastSyncId(): Promise<number> {
-  const val = await AsyncStorage.getItem(LAST_SYNC_KEY);
+  const val = await SecureStore.getItemAsync(LAST_SYNC_KEY);
   return val ? parseInt(val, 10) : 0;
 }
 
@@ -20,7 +20,7 @@ export async function syncNewSms() {
   await api.post(SMS_SYNC_URL, { messages: newSms });
 
   const maxId = Math.max(...newSms.map((s) => parseInt(s._id, 10)));
-  await AsyncStorage.setItem(LAST_SYNC_KEY, String(maxId));
+  await SecureStore.setItemAsync(LAST_SYNC_KEY, String(maxId));
   return { synced: newSms.length };
 }
 
