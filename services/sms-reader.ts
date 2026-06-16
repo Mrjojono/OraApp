@@ -1,6 +1,7 @@
 import { PermissionsAndroid, Platform } from "react-native";
-import { useState, useCallback } from "react";
+import { useState, useCallback, useEffect, useRef } from "react";
 import SmsAndroid from "react-native-get-sms-android";
+import { subscribeToNewSms } from "./sms-listener";
 
 export interface RawSms {
   _id: string;
@@ -61,6 +62,14 @@ export function useSmsReader() {
   const [status, setStatus] = useState<ReadStatus>("idle");
   const [smsList, setSmsList] = useState<RawSms[]>([]);
   const [error, setError] = useState<string | null>(null);
+  const lastCount = useRef(0);
+
+  useEffect(() => {
+    const unsubscribe = subscribeToNewSms((sms) => {
+      setSmsList((prev) => [sms, ...prev]);
+    });
+    return unsubscribe;
+  }, []);
 
   const read = useCallback(async () => {
     setStatus("loading");
@@ -68,7 +77,6 @@ export function useSmsReader() {
 
     try {
       const granted = await requestSmsPermission();
-      console.log(granted);
       if (!granted) {
         setStatus("denied");
         setError("Permission SMS refusée");
@@ -76,6 +84,7 @@ export function useSmsReader() {
       }
 
       const messages = await readAllSms();
+      lastCount.current = messages.length;
       setStatus("granted");
       setSmsList(messages);
       return messages;

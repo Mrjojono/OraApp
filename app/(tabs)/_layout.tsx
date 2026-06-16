@@ -3,6 +3,8 @@ import { Tabs } from "expo-router";
 import { Bell } from "lucide-react-native";
 import { tabs, components } from "@/constants/data";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { useEffect } from "react";
+import { startAutoSync } from "@/services/sms-sync";
 
 const tabBar = components.tabBar;
 
@@ -19,9 +21,13 @@ const Header = () => {
   );
 };
 
-const tabLayout = () => {
+const TabLayout = () => {
   // eslint-disable-next-line react-hooks/rules-of-hooks
   const insets = useSafeAreaInsets();
+  useEffect(() => {
+    const timer = startAutoSync();
+    return () => clearInterval(timer);
+  }, []);
 
   return (
     <Tabs
@@ -61,4 +67,4 @@ const tabLayout = () => {
   );
 };
 
-export default tabLayout;
+export default TabLayout;
