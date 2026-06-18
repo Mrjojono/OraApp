@@ -7,8 +7,8 @@ export interface RawSms {
   _id: string;
   address: string;
   body: string;
-  date: number;
-  date_sent: number;
+  date: string | number;
+  date_sent: string | number;
 }
 
 export async function requestSmsPermission(): Promise<boolean> {
@@ -47,7 +47,14 @@ export function readAllSms(maxCount: number = 500): Promise<RawSms[]> {
       (_count: number, smsListJson: string) => {
         try {
           const messages: RawSms[] = JSON.parse(smsListJson);
-          resolve(messages);
+          resolve(
+            messages.map((msg) => ({
+              ...msg,
+              _id: String(msg._id ?? ""),
+              date: Number(msg.date) || 0,
+              date_sent: Number(msg.date_sent) || 0,
+            })),
+          );
         } catch {
           reject(new Error("Erreur de parsing de la liste SMS"));
         }

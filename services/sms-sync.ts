@@ -1,27 +1,32 @@
 import { api } from "./api";
-import * as SecureStore from "expo-secure-store";
 import { readAllSms } from "./sms-reader";
 
-const LAST_SYNC_KEY = "lastSyncId";
 const SMS_SYNC_URL = "/sms/sync";
-
-async function getLastSyncId(): Promise<number> {
-  const val = await SecureStore.getItemAsync(LAST_SYNC_KEY);
-  return val ? parseInt(val, 10) : 0;
-}
+const CHUNK_SIZE = 100;
 
 export async function syncNewSms() {
-  const allSms = await readAllSms(500);
-  const lastId = await getLastSyncId();
+  try {
+    const allSms = await readAllSms(500);
+    if (allSms.length === 0) return { synced: 0 };
 
-  const newSms = allSms.filter((s) => parseInt(s._id, 10) > lastId);
-  if (newSms.length === 0) return { synced: 0 };
+    let synced = 0;
 
-  await api.post(SMS_SYNC_URL, { messages: newSms });
+    for (let i = 0; i < allSms.length; i += CHUNK_SIZE) {
+      const chunk = allSms.slice(i, i + CHUNK_SIZE);
+      const sanitized = chunk.map((sms) => ({
+        ...sms,
+        date: Number(sms.date) || 0,
+        date_sent: Number(sms.date_sent) || 0,
+      }));
+      await api.post(SMS_SYNC_URL, { messages: sanitized });
+      synced += chunk.length;
+    }
 
-  const maxId = Math.max(...newSms.map((s) => parseInt(s._id, 10)));
-  await SecureStore.setItemAsync(LAST_SYNC_KEY, String(maxId));
-  return { synced: newSms.length };
+    return { synced };
+  } catch (e: any) {
+    console.log("SMS sync error:", e?.response?.data ?? e?.message ?? e);
+    return { synced: 0, error: e };
+  }
 }
 
 export function startAutoSync(intervalMs: number = 3600000) {

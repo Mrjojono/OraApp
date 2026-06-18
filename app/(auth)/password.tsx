@@ -7,22 +7,45 @@ import {
   KeyboardAvoidingView,
   Platform,
   ScrollView,
+  ActivityIndicator,
 } from "react-native";
 import React, { useState, useEffect } from "react";
 import Animated from "react-native-reanimated";
-import { EyeOff, Eye } from "lucide-react-native";
-import { useRouter } from "expo-router";
+import { EyeOff, Eye, AlertCircle } from "lucide-react-native";
+import { useRouter, useLocalSearchParams } from "expo-router";
 import { useAnimation } from "@/hooks/useAnimation";
-import { useLocalSearchParams } from "expo-router";
+import { useAuth } from "@/hooks/useAuth";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 
 const PasswordScreen = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirm, setShowConfirm] = useState(false);
   const [forgotTimer, setForgotTimer] = useState(0);
+  const [error, setError] = useState("");
+  const [password, setPassword] = useState("");
+  //const [confirmPassword, setConfirmPassword] = useState("");
+  const { isSubmitting, login } = useAuth();
   const [canResend, setCanResend] = useState(true);
   const router = useRouter();
   const { entrance, pressScale } = useAnimation();
-  const { from } = useLocalSearchParams();
+  const { from, contact } = useLocalSearchParams();
+
+  // console.log(contact);
+
+  const handleSubmit = async () => {
+    if (from === "login") {
+      if (password.length === 0) {
+        setError("Vous devez entrer un mot de passe");
+        return;
+      }
+      try {
+        await login({ contact: String(contact), password });
+        router.push("/(tabs)");
+      } catch {
+        setError("Échec de la connexion. Vérifiez vos identifiants.");
+      }
+    }
+  };
 
   useEffect(() => {
     if (forgotTimer <= 0) return;
@@ -75,9 +98,11 @@ const PasswordScreen = () => {
               className="flex-row border border-mint-subtle   bg-surface-white px-4"
             >
               <TextInput
+                onChangeText={(text) => setPassword(text)}
+                value={password}
                 style={styles.input}
                 placeholder="••••••••••••••••"
-                className="flex-1 h-full"
+                className="flex-1 text-black h-full"
                 secureTextEntry={!showPassword}
                 autoCapitalize="none"
               />
@@ -145,15 +170,26 @@ const PasswordScreen = () => {
             <TouchableOpacity
               onPressIn={pressScale.onPressIn}
               onPressOut={pressScale.onPressOut}
-              onPress={() => router.push("/(tabs)")}
+              onPress={handleSubmit}
               style={styles.button}
+              disabled={isSubmitting}
             >
               <Animated.View style={pressScale.style}>
-                <Text className="text-lg font-medium text-on-primary">
-                  Continuer
-                </Text>
+                {isSubmitting ? (
+                  <ActivityIndicator size="large" color="#FFFFFF" />
+                ) : (
+                  <Text className="text-lg font-medium text-on-primary">
+                    Continuer
+                  </Text>
+                )}
               </Animated.View>
             </TouchableOpacity>
+            {error ? (
+              <Alert icon={AlertCircle} variant="destructive" className="mt-4">
+                <AlertTitle>Erreur</AlertTitle>
+                <AlertDescription>{error}</AlertDescription>
+              </Alert>
+            ) : null}
           </Animated.View>
         </View>
       </ScrollView>

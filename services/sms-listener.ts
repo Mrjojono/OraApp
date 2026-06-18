@@ -13,11 +13,11 @@ export function subscribeToNewSms(callback: SmsCallback): () => void {
   if (!subscribed && Platform.OS === "android") {
     SmsListener.addListener((message) => {
       const sms: RawSms = {
-        _id: `${message.timestamp}`,
+        _id: String(message.timestamp),
         address: message.originatingAddress,
         body: message.body,
-        date: message.timestamp,
-        date_sent: message.timestamp,
+        date: Number(message.timestamp) || 0,
+        date_sent: Number(message.timestamp) || 0,
       };
       listeners.forEach((cb) => cb(sms));
     });

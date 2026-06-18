@@ -40,8 +40,6 @@
         "projectId": "a2a376a8-ac4d-43d8-bbf8-ad23c2a1cfe9"
       }
     },
-    "plugins": [
-      "expo-secure-store"
-    ]
+    "plugins": []
   }
 }

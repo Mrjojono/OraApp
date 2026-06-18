@@ -8,7 +8,7 @@ import {
   Platform,
   ScrollView,
 } from "react-native";
-import React from "react";
+import React, { useState } from "react";
 import Animated from "react-native-reanimated";
 import { Mail } from "lucide-react-native";
 import { useRouter, useLocalSearchParams } from "expo-router";
@@ -18,12 +18,13 @@ const SignInScreen = () => {
   const router = useRouter();
   const { entrance, pressScale } = useAnimation();
   const { from } = useLocalSearchParams();
-
+  const [email, setEmail] = useState("");
+  //console.log(email.trim());
   const handleContinue = () => {
     if (from === "accountNumber") {
       router.push("/(auth)/otp");
     } else {
-      router.push("/(auth)/password?from=login");
+      router.push(`/(auth)/password?from=login&contact=${email.trim()}`);
     }
   };
 
@@ -57,9 +58,10 @@ const SignInScreen = () => {
             >
               <Mail size={25} color="#727A67" />
               <TextInput
+                onChangeText={setEmail}
                 style={styles.input}
                 placeholder="joan@gmail.com"
-                className="flex-1  ml-1 h-full"
+                className="flex-1 text-black  ml-1 h-full"
                 keyboardType="email-address"
                 autoCapitalize="none"
               />

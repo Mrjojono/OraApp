@@ -5,9 +5,33 @@ import { syncNewSms } from "@/services/sms-sync";
 
 type SyncState = "idle" | "syncing" | "success" | "error";
 
+const stateConfig: Record<
+  SyncState,
+  {
+    bg: string;
+    iconColor: string;
+    subtext: string;
+  }
+> = {
+  idle: {
+    bg: "#3a6a00",
+    iconColor: "#FFFFFF",
+    subtext: "rgba(255,255,255,0.7)",
+  },
+  syncing: {
+    bg: "#3a6a00",
+    iconColor: "#FFFFFF",
+    subtext: "rgba(255,255,255,0.7)",
+  },
+  success: { bg: "#2d3f22", iconColor: "#9fe35d", subtext: "#c5eba3" },
+  error: { bg: "#3d1414", iconColor: "#F09595", subtext: "#f5c4b3" },
+};
+
 export default function SyncIndicator() {
   const [state, setState] = useState<SyncState>("idle");
-  const [message, setMessage] = useState("Importer les transactions mobile money");
+  const [message, setMessage] = useState(
+    "Importer les transactions mobile money",
+  );
   const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   useEffect(() => {
@@ -39,16 +63,18 @@ export default function SyncIndicator() {
     }, 3000);
   };
 
+  const colors = stateConfig[state];
+
   const icon = () => {
     switch (state) {
       case "syncing":
-        return <ActivityIndicator size="small" color="#FFFFFF" />;
+        return <ActivityIndicator size="small" color={colors.iconColor} />;
       case "success":
-        return <Check size={20} color="#FFFFFF" />;
+        return <Check size={20} color={colors.iconColor} />;
       case "error":
-        return <AlertCircle size={20} color="#FFFFFF" />;
+        return <AlertCircle size={20} color={colors.iconColor} />;
       default:
-        return <RefreshCw size={20} color="#FFFFFF" />;
+        return <RefreshCw size={20} color={colors.iconColor} />;
     }
   };
 
@@ -56,16 +82,24 @@ export default function SyncIndicator() {
     <Pressable
       onPress={handleSync}
       disabled={state === "syncing"}
-      style={{ borderRadius: 8 }}
-      className={`bg-primary py-4 px-5 flex-row items-center gap-3 mt-3
+      style={{
+        borderRadius: 8,
+        backgroundColor: colors.bg,
+      }}
+      className={`py-4 px-5 flex-row items-center gap-3 mt-3
         ${state === "syncing" ? "opacity-70" : ""}`}
     >
       {icon()}
       <View className="flex-1">
-        <Text className="text-white font-semibold text-base leading-5">
+        <Text
+          style={{ color: "#FFFFFF" }}
+          className="font-semibold text-base leading-5"
+        >
           Synchroniser mes SMS
         </Text>
-        <Text className="text-white/70 text-xs mt-0.5">{message}</Text>
+        <Text style={{ color: colors.subtext }} className="text-xs mt-0.5">
+          {message}
+        </Text>
       </View>
     </Pressable>
   );

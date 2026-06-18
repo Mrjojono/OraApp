@@ -9,6 +9,9 @@ export default function AuthLayout() {
         headerShadowVisible: false,
         headerStyle: { backgroundColor: "#F6FBEF" },
         headerTintColor: "#181D16",
+        animation: "slide_from_right",
+        animationDuration: 300,
+        gestureEnabled: true,
       }}
     >
       <Stack.Screen name="orchestration" options={{ headerShown: false }} />

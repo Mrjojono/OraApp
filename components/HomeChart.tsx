@@ -14,12 +14,6 @@ type HomeChartProps = {
 };
 
 const HomeChart = ({ data }: HomeChartProps) => {
-  const size = 112;
-  const strokeWidth = 10;
-  const radius = (size - strokeWidth) / 2;
-  const circumference = 2 * Math.PI * radius;
-  const progress = 70;
-
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [dropdownValue, setDropdownValue] = useState("6");
   const [dropdownItems, setDropdownItems] = useState([
@@ -37,7 +31,7 @@ const HomeChart = ({ data }: HomeChartProps) => {
   return (
     <View
       style={{ borderRadius: 8, zIndex: dropdownOpen ? 999 : 1 }}
-      className="mt-11 bg-surface-white border-mint-subtle p-4 border"
+      className="mt-11  bg-transparent border-0"
     >
       <View className="flex-row items-center justify-between mb-4">
         <Text className="text-sm font-semibold  text-gray-500 uppercase tracking-wider">
