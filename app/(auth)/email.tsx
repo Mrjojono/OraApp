@@ -13,6 +13,7 @@ import Animated from "react-native-reanimated";
 import { Mail } from "lucide-react-native";
 import { useRouter, useLocalSearchParams } from "expo-router";
 import { useAnimation } from "@/hooks/useAnimation";
+import { tokens } from "@/lib/tokens";
 
 const SignInScreen = () => {
   const router = useRouter();
@@ -41,7 +42,7 @@ const SignInScreen = () => {
         <View className="flex-1 grid grid-cols-1 mt-28">
           <Animated.Text
             entering={entrance.slideDown.delay(100)}
-            className="text-3xl font-bebas font-bold"
+            className="text-3xl text-foreground font-bebas font-bold"
           >
             ENTRER VOTRE ADRESSE EMAIL
           </Animated.Text>
@@ -49,19 +50,20 @@ const SignInScreen = () => {
             entering={entrance.slideUp.delay(400)}
             className="mt-20"
           >
-            <Text className="text-sm font-medium text-forest-depth mb-2">
+            <Text className="text-sm font-medium text-muted-foreground mb-2">
               Adresse Email
             </Text>
             <View
               style={styles.containerInput}
-              className="flex-row border border-mint-subtle   bg-surface-white px-4"
+              className="flex-row border border-border bg-card px-4"
             >
-              <Mail size={25} color="#727A67" />
+              <Mail size={25} color={tokens.onSurfaceVariant} />
               <TextInput
                 onChangeText={setEmail}
                 style={styles.input}
                 placeholder="joan@gmail.com"
-                className="flex-1 text-black  ml-1 h-full"
+                placeholderTextColor={tokens.muted}
+                className="flex-1 text-foreground ml-1 h-full"
                 keyboardType="email-address"
                 autoCapitalize="none"
               />
@@ -111,6 +113,6 @@ const styles = StyleSheet.create({
     height: 50,
     width: "100%",
     borderRadius: 8,
-    backgroundColor: "#3A6A00",
+    backgroundColor: tokens.accent,
   },
 });

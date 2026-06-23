@@ -5,6 +5,7 @@ import PagerView from "react-native-pager-view";
 import { useRouter } from "expo-router";
 import OnboardingData from "@/constants/OnboardingData";
 import { useAnimation } from "@/hooks/useAnimation";
+import { tokens } from "@/lib/tokens";
 
 const { width } = Dimensions.get("window");
 
@@ -76,7 +77,7 @@ const OnboardingScreen = () => {
                   fontWeight: "bold",
                   textAlign: "center",
                   marginTop: 40,
-                  color: "#181D16",
+                  color: tokens.onSurface,
                 }}
               >
                 {item.title}
@@ -87,7 +88,7 @@ const OnboardingScreen = () => {
                   fontSize: 16,
                   textAlign: "center",
                   marginTop: 12,
-                  color: "#424939",
+                  color: tokens.onSurfaceVariant,
                 }}
               >
                 {item.subtitle}
@@ -101,10 +102,9 @@ const OnboardingScreen = () => {
         onPress={handleSkip}
         style={{ position: "absolute", top: 60, right: 24, zIndex: 10 }}
       >
-        <Text style={{ fontSize: 16, color: "#424939" }}>Skip</Text>
+        <Text style={{ fontSize: 16, color: tokens.onSurfaceVariant }}>Skip</Text>
       </TouchableOpacity>
 
-      {/* Pagination + Next button - bottom */}
       <Animated.View
         entering={entrance.fade.delay(700)}
         style={{
@@ -128,7 +128,8 @@ const OnboardingScreen = () => {
                 width: 8,
                 height: 8,
                 borderRadius: 4,
-                backgroundColor: i === currentIndex ? "#3A6A00" : "#C1C9B4",
+                backgroundColor:
+                  i === currentIndex ? tokens.accent : tokens.onSurfaceVariant,
               }}
             />
           ))}
@@ -146,14 +147,12 @@ const OnboardingScreen = () => {
                   padding: 10,
                   borderRadius: 8,
                   borderWidth: 1,
-                  borderColor: "#3A6A00",
+                  borderColor: tokens.accent,
                 },
                 pressLogin.style,
               ]}
             >
-              <Text
-                style={{ fontSize: 16, fontWeight: "600", color: "#3A6A00" }}
-              >
+              <Text style={{ fontSize: 16, fontWeight: "600", color: tokens.accent }}>
                 Se connecter
               </Text>
             </TouchableOpacity>
@@ -167,13 +166,17 @@ const OnboardingScreen = () => {
                   alignItems: "center",
                   padding: 10,
                   borderRadius: 8,
-                  backgroundColor: "#3A6A00",
+                  backgroundColor: tokens.accent,
                 },
                 pressSignup.style,
               ]}
             >
               <Text
-                style={{ fontSize: 16, fontWeight: "600", color: "#FFFFFF" }}
+                style={{
+                  fontSize: 16,
+                  fontWeight: "600",
+                color: tokens.onAccent,
+                }}
               >
                 Créer un compte
               </Text>
@@ -185,13 +188,19 @@ const OnboardingScreen = () => {
               marginTop: 20,
               alignItems: "center",
               width: "100%",
-              backgroundColor: "#3A6A00",
+              backgroundColor: tokens.accent,
               padding: 12,
               borderRadius: 8,
             }}
             onPress={() => handleNext("orchestration")}
           >
-            <Text style={{ fontSize: 16, fontWeight: "600", color: "#FFFFFF" }}>
+            <Text
+              style={{
+                fontSize: 16,
+                fontWeight: "600",
+                color: tokens.onAccent,
+              }}
+            >
               Suivant
             </Text>
           </TouchableOpacity>

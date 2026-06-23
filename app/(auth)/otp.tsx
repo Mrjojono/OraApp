@@ -11,6 +11,7 @@ import React, { useState, useEffect } from "react";
 import Animated from "react-native-reanimated";
 import { useRouter } from "expo-router";
 import { useAnimation } from "@/hooks/useAnimation";
+import { tokens } from "@/lib/tokens";
 import OTPTextInput from "react-native-otp-textinput";
 
 const OTPScreen = () => {
@@ -54,14 +55,14 @@ const OTPScreen = () => {
         <View className="flex-1 grid grid-cols-1 mt-5">
           <Animated.Text
             entering={entrance.slideDown.delay(100)}
-            className="text-3xl font-bebas font-bold"
+            className="text-3xl text-foreground font-bebas font-bold"
           >
             VÉRIFIEZ VOTRE IDENTITÉ
           </Animated.Text>
 
           <Animated.Text
             entering={entrance.slideUp.delay(250)}
-            className="text-sm text-forest-depth mt-4"
+            className="text-sm text-muted-foreground mt-4"
           >
             Un code de vérification a été envoyé au +228 ********* 05.
           </Animated.Text>
@@ -70,12 +71,12 @@ const OTPScreen = () => {
             entering={entrance.slideUp.delay(400)}
             className="mt-8"
           >
-            <Text className="text-sm font-medium text-forest-depth mb-2">
+            <Text className="text-sm font-medium text-muted-foreground mb-2">
               Code de vérification
             </Text>
             <OTPTextInput
-              tintColor="#3A6A00"
-              offTintColor="#E2EBD6"
+              tintColor={tokens.accent}
+              offTintColor={tokens.outline}
               inputCount={6}
               textInputStyle={{
                 width: 45,
@@ -91,7 +92,7 @@ const OTPScreen = () => {
             entering={entrance.slideUp.delay(550)}
             className="items-center mt-6"
           >
-            <Text className="text-sm text-forest-depth">
+            <Text className="text-sm text-muted-foreground">
               Vous n&apos;avez pas reçu de code ?{" "}
               <Text
                 className={
@@ -139,6 +140,6 @@ const styles = StyleSheet.create({
     height: 50,
     width: "100%",
     borderRadius: 8,
-    backgroundColor: "#3A6A00",
+    backgroundColor: tokens.accent,
   },
 });

@@ -78,18 +78,21 @@ api.interceptors.response.use(
         const refreshToken = await getRefreshToken();
 
         if (!refreshToken) {
+          console.log("Refresh: no refresh token available");
           throw new Error("No refresh token");
         }
 
         const res = await api.post("/auth/refresh", { refreshToken });
         const { accessToken, refreshToken: newRefreshToken } = res.data;
 
+        console.log("Refresh: token refreshed successfully");
         await setTokens(accessToken, newRefreshToken ?? refreshToken);
         processQueue(null, accessToken);
 
         originalRequest.headers.Authorization = `Bearer ${accessToken}`;
         return api(originalRequest);
       } catch (refreshError) {
+        console.log("Refresh: failed, logging out", refreshError);
         processQueue(refreshError, null);
         const { clearAuth } = await import("@/services/storage");
         await clearAuth();

@@ -1,6 +1,13 @@
-import { Home, Wallet, User2, Banknote, ScrollText } from "lucide-react-native";
+import {
+  Home,
+  Wallet,
+  User2,
+  Banknote,
+  ScrollText,
+  Star,
+} from "lucide-react-native";
 import { View } from "react-native";
-
+import { tokens } from "@/lib/tokens";
 const ICON_SIZE = 24;
 
 const TabIcon = ({
@@ -18,13 +25,13 @@ const TabIcon = ({
 }) => (
   <View
     style={{
-      width: 44,
+      width: 70,
       height: 44,
-      borderRadius: 8,
+      borderRadius: 9,
       marginBottom: 10,
       alignItems: "center",
       justifyContent: "center",
-      backgroundColor: focused ? "#E2EBD6" : "transparent",
+      backgroundColor: focused ? "#FF5A5F20" : "transparent",
     }}
   >
     <Icon size={ICON_SIZE} color={color} strokeWidth={2.5} />
@@ -46,18 +53,12 @@ export const tabs: AppTab[] = [
       <TabIcon focused={focused} color={color} icon={Banknote} />
     ),
   },
+
   {
-    name: "advice",
-    title: "Advice",
+    name: "score",
+    title: "Score",
     icon: ({ focused, color }) => (
-      <TabIcon focused={focused} color={color} icon={ScrollText} />
-    ),
-  },
-  {
-    name: "income",
-    title: "Income",
-    icon: ({ focused, color }) => (
-      <TabIcon focused={focused} color={color} icon={Wallet} />
+      <TabIcon focused={focused} color={color} icon={Star} />
     ),
   },
   {
@@ -96,7 +97,7 @@ export const components = {
   tabBar: {
     height: spacing[14],
     horizontalInset: spacing[5],
-    radius: spacing[2],
+    radius: spacing[3],
     iconFrame: spacing[7],
   },
 } as const;

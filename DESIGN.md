@@ -1,156 +1,274 @@
 ---
-name: Earthen Digital Refined
+name: Revolut-Inspired Dark Mode (Orabank)
 colors:
-  surface: '#f6fbef'
-  surface-dim: '#d7dcd0'
-  surface-bright: '#f6fbef'
-  surface-container-lowest: '#ffffff'
-  surface-container-low: '#f0f5e9'
-  surface-container: '#ebf0e4'
-  surface-container-high: '#e5eade'
-  surface-container-highest: '#dfe4d8'
-  on-surface: '#181d16'
-  on-surface-variant: '#424939'
-  inverse-surface: '#2d322a'
-  inverse-on-surface: '#edf2e7'
-  outline: '#727a67'
-  outline-variant: '#c1c9b4'
-  surface-tint: '#3a6a00'
-  primary: '#3a6a00'
-  on-primary: '#ffffff'
-  primary-container: '#9fe35d'
-  on-primary-container: '#376400'
-  inverse-primary: '#96d954'
-  secondary: '#47672d'
-  on-secondary: '#ffffff'
-  secondary-container: '#c5eba3'
-  on-secondary-container: '#4b6c31'
-  tertiary: '#824d70'
-  on-tertiary: '#ffffff'
-  tertiary-container: '#ffbce5'
-  on-tertiary-container: '#7c476a'
-  error: '#ba1a1a'
-  on-error: '#ffffff'
-  error-container: '#ffdad6'
-  on-error-container: '#93000a'
-  primary-fixed: '#b1f66d'
-  primary-fixed-dim: '#96d954'
-  on-primary-fixed: '#0e2000'
-  on-primary-fixed-variant: '#2b5000'
-  secondary-fixed: '#c8eea5'
-  secondary-fixed-dim: '#acd28c'
-  on-secondary-fixed: '#0c2000'
-  on-secondary-fixed-variant: '#304f18'
-  tertiary-fixed: '#ffd8ed'
-  tertiary-fixed-dim: '#f5b3db'
-  on-tertiary-fixed: '#350a2a'
-  on-tertiary-fixed-variant: '#683658'
-  background: '#f6fbef'
-  on-background: '#181d16'
-  surface-variant: '#dfe4d8'
-  surface-white: '#FFFFFF'
-  forest-depth: '#0E2100'
-  mint-subtle: '#E2EBD6'
+  background: '#0D0D0D'
+  surface: '#1A1A1A'
+  surface-dim: '#242424'
+  on-surface: '#FFFFFF'
+  on-surface-variant: '#A5A5A5'
+  outline: '#2C2C2E'
+  accent: '#FF5A5F'
+  on-accent: '#FFFFFF'
+  accent-container: rgba(255,90,95,0.12)
+  warning-bg: '#3A2A1A'
+  warning-accent: '#FFC043'
+  positive: '#30D158'
+  negative: '#FF453A'
+  tab-inactive: '#A5A5A5'
+  text-muted: '#555555'
 typography:
   display-lg:
-    fontFamily: Plus Jakarta Sans
-    fontSize: 48px
+    fontFamily: Playfair Display
+    fontSize: 56px
     fontWeight: '700'
-    lineHeight: 56px
+    lineHeight: 64px
     letterSpacing: -0.02em
+  display-md:
+    fontFamily: Playfair Display
+    fontSize: 44px
+    fontWeight: '700'
+    lineHeight: 52px
   headline-lg:
-    fontFamily: Plus Jakarta Sans
-    fontSize: 32px
-    fontWeight: '700'
-    lineHeight: 40px
-    letterSpacing: -0.01em
-  headline-lg-mobile:
-    fontFamily: Plus Jakarta Sans
+    fontFamily: DM Sans
     fontSize: 28px
-    fontWeight: '700'
+    fontWeight: '600'
     lineHeight: 36px
+  headline-md:
+    fontFamily: DM Sans
+    fontSize: 22px
+    fontWeight: '600'
+    lineHeight: 28px
   title-md:
-    fontFamily: Plus Jakarta Sans
-    fontSize: 20px
+    fontFamily: DM Sans
+    fontSize: 17px
     fontWeight: '600'
-    lineHeight: 28px
-  body-lg:
-    fontFamily: Plus Jakarta Sans
-    fontSize: 18px
-    fontWeight: '400'
-    lineHeight: 28px
-  body-md:
-    fontFamily: Plus Jakarta Sans
-    fontSize: 16px
-    fontWeight: '400'
     lineHeight: 24px
-  label-md:
-    fontFamily: Inter
+  body-md:
+    fontFamily: DM Sans
     fontSize: 14px
-    fontWeight: '500'
+    fontWeight: '400'
     lineHeight: 20px
-    letterSpacing: 0.01em
+  label-md:
+    fontFamily: DM Sans
+    fontSize: 13px
+    fontWeight: '500'
+    lineHeight: 18px
   label-sm:
-    fontFamily: Inter
-    fontSize: 12px
-    fontWeight: '600'
+    fontFamily: DM Sans
+    fontSize: 11px
+    fontWeight: '500'
     lineHeight: 16px
-    letterSpacing: 0.03em
+  caption:
+    fontFamily: DM Sans
+    fontSize: 10px
+    fontWeight: '500'
+    lineHeight: 14px
+  number-lg:
+    fontFamily: DM Sans
+    fontSize: 56px
+    fontWeight: '700'
+    lineHeight: 64px
+    letterSpacing: -0.01em
+  number-md:
+    fontFamily: DM Sans
+    fontSize: 24px
+    fontWeight: '600'
+    lineHeight: 32px
 rounded:
-  sm: 0.25rem
-  DEFAULT: 0.5rem
-  md: 0.75rem
-  lg: 1rem
-  xl: 1.5rem
-  full: 9999px
+  sm: 4px
+  DEFAULT: 10px
+  md: 12px
+  lg: 14px
+  xl: 16px
 spacing:
-  unit: 8px
-  margin-mobile: 20px
-  margin-desktop: 40px
-  gutter: 24px
-  container-max-width: 1200px
+  margin-mobile: 16px
+  gutter: 12px
+  card-padding: 20px
+  section-gap: 20px
+  card-gap: 12px
 ---
 
 ## Brand & Style
-The design system evolves into a high-clarity, "Wise-inspired" aesthetic that prioritizes functional minimalism and human-centric financial clarity. The brand personality is authoritative yet accessible, shedding the density of traditional fintech for an airy, open, and precision-oriented interface.
 
-The design style is **Tactile Minimalism**. It relies on solid layers, distinct tonal shifts, and sharp execution rather than blurs or complex gradients. The visual language emphasizes high contrast and generous white space to evoke a sense of transparency and ease, ensuring that complex financial data feels manageable and inviting.
+OraApp est un assistant de monitoring financier connecté à Orabank. Design inspiré de Revolut : dark mode premium, carte foncées sur fond noir, accent corail utilisé avec parcimonie.
+
+Le style est **Dark Mode Fintech Premium** :
+- Fond #0D0D0D, cartes #1A1A1A, bordures fines #2C2C2E
+- Aucun effet décoratif (zéro gradient, zéro glassmorphisme, zéro ombre portée)
+- L'accent corail (#FF5A5F) est un signal, pas une décoration
+- L'interface inspire confiance par sa rigueur sombre et premium
+- Mobile-first, conçu pour une utilisation en déplacement
 
 ## Colors
-The palette shifts toward a "white-first" hierarchy to maximize perceived lightness. **Surface White (#FFFFFF)** is the primary canvas, used for all main containers and backgrounds to avoid the "oppressive dark" feel of earlier iterations. 
 
-- **Primary (Wise Lime):** Reserved for critical actions, success states, and key brand moments. It acts as a high-visibility signal against neutral backgrounds.
-- **Secondary (Deep Navy/Green):** Provides grounding and depth. Used for high-contrast text, primary navigation elements, and structural borders.
-- **Neutral (Off-white/Mint):** `F0F5E9` serves as the `surface-container` color, creating soft distinction between the white background and secondary content areas without introducing heavy shadows.
+L'accent corail (#FF5A5F) est utilisé avec parcimonie :
+- **Accent (#FF5A5F)** : Score, CTA, insights, tab active, icône Score dans QuickActions
+- **Warning (#FFC043)** : Alertes et avertissements (amber)
+- **Positive (#30D158)** : Variations positives (+12%, +21 pts), soldes en hausse
+- **Negative (#FF453A)** : Dépenses, alertes urgentes
+- **Neutres** : Fond #0D0D0D, cartes #1A1A1A, bordures #2C2C2E
+- **Textes** : Primaire #FFFFFF, secondaire #A5A5A5 (contraste 4.7:1), muet #555555
 
 ## Typography
-The typography strategy leverages **Plus Jakarta Sans** as the workhorse for headlines and body text to achieve a modern, welcoming, and highly legible feel. **Inter** is utilized strictly for utility roles—labels, data tables, and micro-copy—where its neutral, systematic character ensures maximum clarity at small scales.
 
-Refining the scale involves increased line-heights and tighter letter-spacing for large headlines to maintain a "Wise-like" professional punch. Headlines should always use the `Secondary` color for maximum contrast against white surfaces.
+- **Playfair Display** (serif) → grands montants, score (56px)
+- **DM Sans** (sans-serif) → tout le reste : labels, data, body, badges
+- Aucun usage d'Inter, Roboto, ou Helvetica
+- Poids max : 700 (display), 600 (headings), 500 (body/labels)
+- Letter-spacing serré (-0.01em à -0.02em) pour les montants
 
 ## Layout & Spacing
-The system uses a **Fixed Grid** model for desktop to ensure content remains centered and readable, transitioning to a fluid model for mobile. 
 
-- **Whitespace:** Padding is intentionally generous (minimum 32px between major sections) to create an "airy" feel.
-- **Floating Navbar:** The navigation bar persists as a floating element with a white background and a subtle 1px border (`#E2EBD6`), rather than a shadow, maintaining the tactile minimalist theme.
-- **Responsive Reflow:** On mobile, margins reduce to 20px, and multi-column grids collapse into a single-column stack with standardized 16px vertical spacing between cards.
+- Layout vertical, gap 20px entre sections
+- Marges mobiles : 16px (padding latéral des sections dans le Content)
+- Cards : padding 20-24px, corner radius 14px, bordure 1px #2C2C2E
+- Tab bar flottante : capsule style, corner radius 16px, margin 16px
+- La hauteur des cartes est déterminée par le contenu
+- Pas de bento grid — les cartes s'empilent verticalement
 
-## Elevation & Depth
-Depth is conveyed through **Tonal Layers** and **Low-Contrast Outlines**. 
-- **Level 0 (Background):** Pure White (#FFFFFF).
-- **Level 1 (Cards/Sections):** Off-white (#F0F5E9) with a 1px solid border in Mint-subtle (#E2EBD6).
-- **Level 2 (Interaction):** High-contrast shifts. For example, a button or card might shift from a 1px border to a solid primary color fill on hover.
+## Navigation
 
-Avoid all backdrop blurs and soft ambient shadows. The hierarchy must feel "stacked" and physical, relying on the contrast between the white background and the subtle green-tinted containers.
+- **Tab bar flottante** (capsule) : 4 sections (Accueil, Analyse, Score, Profil)
+- Fond #1A1A1A, bordure 1px #2C2C2E, corner radius 16px
+- Icônes Phosphor outline, 20px
+- Label 9px/600 sous chaque icône
+- Tab active : icône + texte en corail #FF5A5F, fond rgba(255,90,95,0.12)
+- Tab inactive : icône + texte en #A5A5A5
+- Position : flottante en bas de l'écran, margin 16px
 
-## Shapes
-Shapes are defined by **Rounded (0.5rem)** corners, providing a friendly but structured appearance. This "medium" roundedness ensures that UI elements like buttons and input fields feel approachable without the playfulness of a full pill-shape. 
+## Sections du Dashboard
 
-Secondary containers and large cards should utilize `rounded-lg` (1rem) to soften the large blocks of color and maintain the human-centric aesthetic.
+### Balance Section
+- Pas de carte — texte directement sur le fond #0D0D0D
+- Label "Solde disponible" en #8E8E93 (13px/500)
+- Montant en display-lg (Playfair Display, 44px/700, #FFFFFF)
+- Changement (+12%) en positif #30D158
+- Sync indicator en #555555
 
-## Components
-- **Buttons:** Primary buttons are solid Wise Lime with Deep Navy text. Secondary buttons are transparent with a Deep Navy 1px border. No gradients or shadows; interaction is shown via a darken/lighten tonal shift of the fill color.
-- **Floating Navbar:** Use a 1px border (`mint-subtle`) for definition. Icons should be monoline and 24px, paired with `label-sm` text.
-- **Input Fields:** Utilize the white surface with a `mint-subtle` 1px border. On focus, the border transitions to a 2px Deep Navy stroke for high-contrast accessibility.
-- **Chips/Status Tags:** Use low-saturation backgrounds (e.g., a very pale version of the status color) with high-saturation text to maintain the clean, functional look.
-- **Cards:** White or Off-white fill only. Use "Interpretive Advice" blocks with `title-md` headlines and `body-md` descriptions, ensuring text remains the focal point of the component.
+### Quick Actions
+- 4 cartes horizontales (#1A1A1A, radius 14px)
+- Icône 22px + label 10px/500 #8E8E93
+- **Score** : icône en corail #FF5A5F (point d'entrée principal)
+- Objectifs, Conseils, Aide : icônes blanches #FFFFFF
+
+### AlertBanner (contextuel)
+- Apparaît entre QuickActions et ScoreCard quand l'API retourne une alerte
+- Fond selon sévérité : #3A2A1A (WARNING), icon #FFC043
+- Layout horizontal : icon + texte + CTA
+- Padding 14px, corner radius 14px
+- Titre #FFFFFF 13px/600, message #D0D0D0 11px/500, CTA #FFC043 11px/600
+
+### OraScore Card
+- Carte verticale (#1A1A1A, radius 14px, padding 20px)
+- Row 1 : label "OraScore" + badge "75/100 · Très bien" (corail sur fond rgba(255,90,95,0.12))
+- Row 2 : score number (Playfair Display, 56px/700) + trend (#30D158)
+- Row 3 : gauge bar full-width (8px height, radius 4px, fill proportionnel)
+- Row 4 : detail (#A5A5A5) + CTA "Recommandations →" (corail #FF5A5F)
+- Score - label : BON, TRÈS BIEN, EXCELLENT
+
+### Budget Card
+- Carte verticale (#1A1A1A, radius 14px, padding 20px, gap 16px)
+- Header : "Dépenses du mois" (#FFFFFF, 15px/600) + total (#A5A5A5)
+- 3 catégories maximum sur le dashboard (Logement/Alimentation/Transport)
+- Chaque catégorie : dot 8px + nom (#FFFFFF) + barre (6px) + montant (#A5A5A5)
+- Barres proportionnelles (40%→140px, 25%→90px, 15%→55px dans 342px)
+- "Voir toutes les catégories →" en corail
+- InsightRow fusionné : fond #242424, icon corail, title #FFFFFF, sub #D0D0D0
+
+## Components (transversaux)
+
+### ScoreBar (réutilisable)
+- Barre horizontale, corner radius 4px, hauteur 8px
+- Fond #2C2C2E, fill couleur accent
+- Utilisé dans ScoreCard, éligibilité, etc.
+
+### InsightRow
+- Fond #242424, corner radius 10px, padding 12-14px
+- Icon 18px (corail) + texte vertical
+- Titre 12px/600 #FFFFFF, sous-titre 10px/500 #D0D0D0
+- Fusionné dans la BudgetCard du dashboard
+
+### Buttons (adaptés dark mode)
+- Primary : pas de filled — privilégier les CTA textuels en corail
+- Ghost : texte #A5A5A5
+- Secondary card : bordure 1px #2C2C2E
+
+### AdviceCard (dark mode)
+- Carte #1A1A1A, bordure 1px #2C2C2E, radius 14px
+- **Sévérité INFO** : icon corail ou bleu
+- **Sévérité WARNING** : fond #3A2A1A, icon #FFC043
+- **Sévérité CRITICAL** : fond #3A1A1A, icon #FF453A
+
+### Loading / Empty / Error
+- Loading : skeleton cards #2C2C2E avec pulse
+- Empty : icon 48px #555555 + texte #A5A5A5
+- Error : icon warning + "Réessayer" en ghost
+- Offline : "Dernière sync" dans le header
+
+### Advice Display Rules (API)
+
+| Type | Sévérité | Composant | Placement |
+|------|----------|-----------|-----------|
+| OVERDRAFT_RISK | CRITICAL | AlertBanner | Dashboard, tout en haut |
+| SPENDING_SPIKE | WARNING | AlertBanner | Dashboard |
+| BALANCE_LOW | WARNING | AdviceCard | Dashboard |
+| DEBT_WARNING | CRITICAL | AlertBanner | Score |
+| GOOD_HABIT | INFO | AdviceCard | Score |
+| TOP_CATEGORY | INFO | AdviceCard | Analyse |
+| HIGH_EXPENSE_RATIO | WARNING | AdviceCard | Analyse |
+| SUBSCRIPTION_BLOAT | INFO | AdviceCard | Analyse |
+| SAVINGS_DROP | WARNING | AlertBanner | Revenus |
+| INCOME_DROP | WARNING | AlertBanner | Revenus |
+
+## Data Sources (API Mapping)
+
+```typescript
+// Base: http://localhost:4000, Auth: JWT Bearer
+
+interface AnalyticsEndpoints {
+  // Dashboard
+  balance:       'GET /analytics/:customerId/balance/average'       // averageBalance
+  cashflow:      'GET /analytics/:customerId/revenues/cashflow'     // totalCredits, totalDebits, netFlow
+  score:         'GET /analytics/:customerId/score'                 // globalScore, label
+  scoreHistory:  'GET /analytics/:customerId/score/history?months=6' // history[], trend
+  scoreExplain:  'GET /analytics/:customerId/score/explanation'     // indicators[]
+  
+  // Analyse
+  expensesDetect:    'GET /analytics/:customerId/expenses/detect'
+  expensesCats:     'GET /analytics/:customerId/expenses/categories'
+  expensesRecurring:'GET /analytics/:customerId/expenses/recurring?months=3'
+  expensesVariable: 'GET /analytics/:customerId/expenses/variable'
+  expensesRatio:    'GET /analytics/:customerId/expenses/ratio'
+  
+  // Revenus
+  revenuesMonthly:  'GET /analytics/:customerId/revenues/monthly'
+  revenuesSources:  'GET /analytics/:customerId/revenues/sources'
+  revenuesFreq:     'GET /analytics/:customerId/revenues/frequency'
+  revenuesVariation:'GET /analytics/:customerId/revenues/variation'
+  
+  // Advice
+  advice:           'GET /analytics/:customerId/advice'
+  recommendations:  'GET /analytics/:customerId/score/recommendations'
+}
+
+interface AuthEndpoints {
+  register:    'POST /auth/register'    // 4 steps: account → contact → otp → password
+  login:       'POST /auth/login'
+  resendOtp:   'POST /auth/resend-otp'
+  forgotPwd:   'POST /auth/forgot-password'  // 3 steps: contact → otp → new password
+  me:          'POST /auth/me'
+  logout:      'POST /auth/logout'
+}
+
+interface EligibilityEndpoint {
+  evaluate:    'POST /eligibility/evaluate'  // productName, status, scorePercent, rules[]
+}
+```
+
+---
+
+## Écrans à concevoir (prochaines étapes)
+
+1. **Analyse** — Dépenses par catégorie, récurrentes vs variables, ratio dépenses/revenus
+2. **Score** — Score détaillé, historique (graphique), recommandations, explication des indicateurs
+3. **Profil** — Infos personnelles, score récap, éligibilité produits, déconnexion

@@ -1,0 +1,16 @@
+export const tokens = {
+  background: "#0D0D0D",
+  surface: "#1A1A1A",
+  surfaceDim: "#242424",
+  onSurface: "#FFFFFF",
+  onSurfaceVariant: "#A5A5A5",
+  outline: "#2C2C2E",
+  accent: "#FF5A5F",
+  onAccent: "#FFFFFF",
+  accentContainer: "rgba(255,90,95,0.12)",
+  warning: "#FFC043",
+  warningBg: "#3A2A1A",
+  positive: "#30D158",
+  negative: "#FF453A",
+  muted: "#555555",
+} as const;

@@ -1,12 +1,12 @@
 import { View, Text } from "react-native";
 import React from "react";
 
-const advice = () => {
+const Score = () => {
   return (
     <View>
-      <Text>advice</Text>
+      <Text>Score</Text>
     </View>
   );
 };
 
-export default advice;
+export default Score;

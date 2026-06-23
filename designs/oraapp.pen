@@ -1,0 +1,39 @@
+{
+  "version": "2.13",
+  "children": [
+    {
+      "id": "page1",
+      "name": "Login",
+      "type": "page",
+      "bounds": {"x": 0, "y": 0, "width": 390, "height": 844},
+      "style": {"backgroundColor": "#F5F5F5"},
+      "objects": [
+        {"id": "text1", "type": "Label", "text": "Welcome, please log in", "fontFamily": "Inter", "fontSize": 24, "fontWeight": "600", "color": "#333333", "bounds": {"x": 20, "y": 80, "width": 350, "height": 30}},
+        {"id": "inputEmail", "type": "TextBox", "placeholder": "Email", "fontFamily": "Inter", "fontSize": 16, "bounds": {"x": 20, "y": 130, "width": 350, "height": 40}, "style": {"borderRadius": 8, "border": "1px solid #CCCCCC", "padding": "8px"}},
+        {"id": "inputPassword", "type": "PasswordBox", "placeholder": "Password", "fontFamily": "Inter", "fontSize": 16, "bounds": {"x": 20, "y": 190, "width": 350, "height": 40}, "style": {"borderRadius": 8, "border": "1px solid #CCCCCC", "padding": "8px"}},
+        {"id":"buttonNext","type":"Button","text":"Next","fontFamily":"Inter","fontSize":16,"style":{"backgroundColor":"#0066FF","color":"#FFFFFF","borderRadius":8,"shadow":"0 2px 4px rgba(0,0,0,0.2)"},"bounds":{"x":20,"y":250,"width":100,"height":44},"actions":[{"type":"navigate","target":"page2"}]}
+      ]
+    },
+    {
+      "id": "page2",
+      "name": "OTP Verification",
+      "type": "page",
+      "bounds": {"x": 0, "y": 0, "width": 1440, "height": 1024},
+      "objects": [
+        {"id": "text2", "type": "Label", "text": "Enter the verification code sent to your email", "bounds": {"x": 200, "y": 100, "width": 600, "height": 40}},
+        {"id": "inputOTP", "type": "TextBox", "placeholder": "6-digit code", "bounds": {"x": 200, "y": 160, "width": 200, "height": 40}},
+        { "id": "buttonVerify", "type": "Button", "text": "Verify", "fontFamily": "Inter", "fontSize": 16, "style": { "backgroundColor": "#28A745", "color": "#FFFFFF", "borderRadius": 8, "shadow": "0 2px 4px rgba(0,0,0,0.2)" }, "bounds": { "x": 20, "y": 220, "width": 100, "height": 44 }, "actions": [ { "type": "navigate", "target": "page3" } ] }
+      ]
+    },
+    {
+      "id": "page3",
+      "name": "Success",
+      "type": "page",
+      "bounds": {"x": 0, "y": 0, "width": 1440, "height": 1024},
+      "objects": [
+        {"id": "text3", "type": "Label", "text": "Authentication successful!", "bounds": {"x": 200, "y": 100, "width": 400, "height": 40}},
+        {"id": "buttonContinue", "type": "Button", "text": "Continue", "bounds": {"x": 200, "y": 160, "width": 100, "height": 40}}
+      ]
+    }
+  ]
+}

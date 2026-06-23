@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Pressable, Text, View, ActivityIndicator } from "react-native";
 import { api } from "@/services/api";
+import { tokens } from "@/lib/tokens";
 
 export default function PingTest() {
   const [result, setResult] = useState<string | null>(null);
@@ -48,7 +49,7 @@ export default function PingTest() {
         className="bg-red-500 py-3 px-5 rounded-lg items-center"
       >
         {loading ? (
-          <ActivityIndicator color="#FFFFFF" />
+          <ActivityIndicator color={tokens.onAccent} />
         ) : (
           <Text className="text-white font-semibold text-sm">
             Tester connexion backend

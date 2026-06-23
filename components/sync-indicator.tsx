@@ -2,6 +2,7 @@ import { useState, useEffect, useRef } from "react";
 import { Pressable, ActivityIndicator, View, Text } from "react-native";
 import { RefreshCw, Check, AlertCircle } from "lucide-react-native";
 import { syncNewSms } from "@/services/sms-sync";
+import { tokens } from "@/lib/tokens";
 
 type SyncState = "idle" | "syncing" | "success" | "error";
 
@@ -14,14 +15,14 @@ const stateConfig: Record<
   }
 > = {
   idle: {
-    bg: "#3a6a00",
-    iconColor: "#FFFFFF",
-    subtext: "rgba(255,255,255,0.7)",
+    bg: tokens.accent,
+    iconColor: tokens.onAccent,
+    subtext: tokens.onSurfaceVariant,
   },
   syncing: {
-    bg: "#3a6a00",
-    iconColor: "#FFFFFF",
-    subtext: "rgba(255,255,255,0.7)",
+    bg: tokens.accent,
+    iconColor: tokens.onAccent,
+    subtext: tokens.onSurfaceVariant,
   },
   success: { bg: "#2d3f22", iconColor: "#9fe35d", subtext: "#c5eba3" },
   error: { bg: "#3d1414", iconColor: "#F09595", subtext: "#f5c4b3" },
@@ -64,6 +65,7 @@ export default function SyncIndicator() {
   };
 
   const colors = stateConfig[state];
+  const PFG = tokens.onAccent;
 
   const icon = () => {
     switch (state) {
@@ -92,7 +94,7 @@ export default function SyncIndicator() {
       {icon()}
       <View className="flex-1">
         <Text
-          style={{ color: "#FFFFFF" }}
+          style={{ color: PFG }}
           className="font-semibold text-base leading-5"
         >
           Synchroniser mes SMS

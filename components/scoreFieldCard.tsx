@@ -3,6 +3,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
 import { CreditCard, AlertCircle } from "lucide-react-native";
 import { getProgressColor } from "@/lib/utils";
+import { tokens } from "@/lib/tokens";
 
 import React from "react";
 
@@ -19,8 +20,8 @@ const ScoreFieldCard = ({
         <CardContent className="p-3">
           {/* Header icons */}
           <View className="flex flex-row justify-between items-center">
-            <CreditCard size={26} color="#000" />
-            {progress < 25 && <AlertCircle size={26} color="red" />}
+            <CreditCard size={26} color={tokens.onSurface} />
+            {progress < 25 && <AlertCircle size={26} color={tokens.negative} />}
           </View>
 
           {/* Title */}

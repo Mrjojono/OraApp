@@ -17,6 +17,7 @@ import { PortalHost } from "@rn-primitives/portal";
 import { AuthProvider } from "@/contexts/AuthContext";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { BottomSheetModalProvider } from "@gorhom/bottom-sheet";
+import CustomAlert from "@/components/ui/CustomAlert";
 
 export default function RootLayout() {
   const [loaded] = useFonts({
@@ -34,9 +35,15 @@ export default function RootLayout() {
 
   return (
     <AuthProvider>
-      <GestureHandlerRootView className="bg-background flex-1">
+      <GestureHandlerRootView style={{ flex: 1, backgroundColor: "#0D0D0D" }}>
         <BottomSheetModalProvider>
-          <Stack screenOptions={{ headerShown: false }} />
+          <Stack
+            screenOptions={{
+              headerShown: false,
+              contentStyle: { backgroundColor: "#0D0D0D" },
+            }}
+          />
+          <CustomAlert />
           <PortalHost />
         </BottomSheetModalProvider>
       </GestureHandlerRootView>

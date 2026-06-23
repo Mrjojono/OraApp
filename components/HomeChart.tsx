@@ -2,6 +2,7 @@ import { View, Text } from "react-native";
 import React, { useState } from "react";
 import DropDownPicker from "react-native-dropdown-picker";
 import { BarChart } from "react-native-gifted-charts";
+import { tokens } from "@/lib/tokens";
 
 type HomeChartData = {
   value: number;
@@ -31,10 +32,10 @@ const HomeChart = ({ data }: HomeChartProps) => {
   return (
     <View
       style={{ borderRadius: 8, zIndex: dropdownOpen ? 999 : 1 }}
-      className="mt-11  bg-transparent border-0"
+      className="mt-11 bg-transparent border-0"
     >
       <View className="flex-row items-center justify-between mb-4">
-        <Text className="text-sm font-semibold  text-gray-500 uppercase tracking-wider">
+        <Text style={{ fontSize: 13, fontWeight: "600", color: tokens.onSurfaceVariant, textTransform: "uppercase", letterSpacing: 0.5 }}>
           Évolution du score
         </Text>
         <View style={{ zIndex: dropdownOpen ? 1000 : 1 }}>
@@ -46,8 +47,8 @@ const HomeChart = ({ data }: HomeChartProps) => {
             setValue={setDropdownValue}
             setItems={setDropdownItems}
             style={{
-              backgroundColor: "#F5F7F0",
-              borderColor: "#D4DFC7",
+              backgroundColor: tokens.surface,
+              borderColor: tokens.outline,
               borderRadius: 8,
               minHeight: 32,
               width: 110,
@@ -55,17 +56,17 @@ const HomeChart = ({ data }: HomeChartProps) => {
             containerStyle={{ width: 110 }}
             textStyle={{
               fontSize: 12,
-              color: "#3A6A00",
+              color: tokens.accent,
               fontWeight: "600",
             }}
             dropDownContainerStyle={{
-              backgroundColor: "#FFFFFF",
-              borderColor: "#D4DFC7",
+              backgroundColor: tokens.surface,
+              borderColor: tokens.outline,
               borderRadius: 8,
             }}
             labelStyle={{ fontWeight: "600" }}
-            listItemLabelStyle={{ fontSize: 12, color: "#4A5568" }}
-            selectedItemLabelStyle={{ color: "#3A6A00", fontWeight: "600" }}
+            listItemLabelStyle={{ fontSize: 12, color: tokens.onSurfaceVariant }}
+            selectedItemLabelStyle={{ color: tokens.accent, fontWeight: "600" }}
             listMode="SCROLLVIEW"
             showArrowIcon
           />
@@ -78,8 +79,8 @@ const HomeChart = ({ data }: HomeChartProps) => {
         spacing={spacing}
         yAxisThickness={0}
         hideYAxisText
-        xAxisColor="#E2EBD6"
-        xAxisLabelTextStyle={{ color: "#727A67", fontSize: labelFontSize }}
+        xAxisColor={tokens.outline}
+        xAxisLabelTextStyle={{ color: tokens.onSurfaceVariant, fontSize: labelFontSize }}
         labelsDistanceFromXaxis={6}
         height={200}
         isAnimated

@@ -7,6 +7,7 @@ import Animated, {
 } from "react-native-reanimated";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { tabs } from "@/constants/data";
+import { tokens } from "@/lib/tokens";
 
 const { width: SCREEN_WIDTH } = Dimensions.get("window");
 
@@ -52,9 +53,9 @@ const CustomTabBar = ({
         right: CONFIG.horizontalInset,
         height: CONFIG.height,
         borderRadius: CONFIG.radius,
-        backgroundColor: "#FFFFFF",
+        backgroundColor: tokens.surface,
         borderWidth: 1,
-        borderColor: "#E2EBD6",
+        borderColor: tokens.outline,
         flexDirection: "row",
         alignItems: "center",
         paddingHorizontal: 0,
@@ -67,7 +68,7 @@ const CustomTabBar = ({
             width: CONFIG.pillWidth,
             height: CONFIG.pillHeight,
             borderRadius: CONFIG.pillHeight / 2,
-            backgroundColor: "#E2EBD6",
+            backgroundColor: tokens.accent,
           },
           pillStyle,
         ]}
@@ -91,7 +92,7 @@ const CustomTabBar = ({
           >
             {tab.icon({
               focused: isFocused,
-              color: isFocused ? "#3A6A00" : "#C1C9B4",
+              color: isFocused ? tokens.accent : tokens.onSurfaceVariant,
               size: CONFIG.iconSize,
             })}
           </TouchableOpacity>

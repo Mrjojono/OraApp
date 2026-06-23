@@ -1,4 +1,6 @@
 import { Stack } from "expo-router";
+import BackButton from "@/components/BackButton";
+import { tokens } from "@/lib/tokens";
 
 export default function AuthLayout() {
   return (
@@ -7,11 +9,13 @@ export default function AuthLayout() {
         headerShown: true,
         headerTitle: "",
         headerShadowVisible: false,
-        headerStyle: { backgroundColor: "#F6FBEF" },
-        headerTintColor: "#181D16",
-        animation: "slide_from_right",
+        headerStyle: { backgroundColor: tokens.background },
+        headerTintColor: tokens.onSurface,
+        headerLeft: () => <BackButton />,
+        animation: "fade",
         animationDuration: 300,
         gestureEnabled: true,
+        contentStyle: { backgroundColor: tokens.background },
       }}
     >
       <Stack.Screen name="orchestration" options={{ headerShown: false }} />

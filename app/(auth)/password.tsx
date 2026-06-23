@@ -15,6 +15,7 @@ import { EyeOff, Eye, AlertCircle } from "lucide-react-native";
 import { useRouter, useLocalSearchParams } from "expo-router";
 import { useAnimation } from "@/hooks/useAnimation";
 import { useAuth } from "@/hooks/useAuth";
+import { tokens } from "@/lib/tokens";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 
 const PasswordScreen = () => {
@@ -79,7 +80,7 @@ const PasswordScreen = () => {
         <View className="flex-1 grid grid-cols-1 mt-5">
           <Animated.Text
             entering={entrance.slideDown.delay(100)}
-            className="text-3xl font-bebas font-bold"
+            className="text-3xl text-foreground font-bebas font-bold"
           >
             {from === "register"
               ? "CRÉER VOTRE MOT DE PASSE"
@@ -90,27 +91,28 @@ const PasswordScreen = () => {
             entering={entrance.slideUp.delay(400)}
             className="mt-20"
           >
-            <Text className="text-sm font-medium text-forest-depth mb-2">
+            <Text className="text-sm font-medium text-muted-foreground mb-2">
               Mot de passe
             </Text>
             <View
               style={styles.containerInput}
-              className="flex-row border border-mint-subtle   bg-surface-white px-4"
+              className="flex-row border border-border bg-card px-4"
             >
               <TextInput
                 onChangeText={(text) => setPassword(text)}
                 value={password}
                 style={styles.input}
                 placeholder="••••••••••••••••"
-                className="flex-1 text-black h-full"
+                placeholderTextColor={tokens.muted}
+                className="flex-1 text-foreground h-full"
                 secureTextEntry={!showPassword}
                 autoCapitalize="none"
               />
               <TouchableOpacity onPress={() => setShowPassword(!showPassword)}>
                 {showPassword ? (
-                  <Eye size={25} color="#727A67" />
+                  <Eye size={25} color={tokens.onSurfaceVariant} />
                 ) : (
-                  <EyeOff size={25} color="#727A67" />
+                  <EyeOff size={25} color={tokens.onSurfaceVariant} />
                 )}
               </TouchableOpacity>
             </View>
@@ -122,7 +124,7 @@ const PasswordScreen = () => {
               >
                 <Text
                   className={`text-sm ml-1 underline font-medium mt-1 ${
-                    canResend ? "text-forest-depth" : "text-outline"
+                    canResend ? "text-foreground" : "text-muted-foreground"
                   }`}
                 >
                   {canResend
@@ -138,25 +140,26 @@ const PasswordScreen = () => {
               entering={entrance.slideUp.delay(400)}
               className="mt-10"
             >
-              <Text className="text-sm font-medium text-forest-depth mb-2">
+              <Text className="text-sm font-medium text-muted-foreground mb-2">
                 Repeter le mot de passe
               </Text>
               <View
                 style={styles.containerInput}
-                className="flex-row border border-mint-subtle   bg-surface-white px-4"
+                className="flex-row border border-border bg-card px-4"
               >
                 <TextInput
                   style={styles.input}
                   placeholder="••••••••••••••••"
-                  className="flex-1 h-full"
+                  placeholderTextColor={tokens.muted}
+                  className="flex-1 text-foreground h-full"
                   secureTextEntry={!showConfirm}
                   autoCapitalize="none"
                 />
                 <TouchableOpacity onPress={() => setShowConfirm(!showConfirm)}>
                   {showConfirm ? (
-                    <Eye size={25} color="#727A67" />
+                    <Eye size={25} color={tokens.onSurfaceVariant} />
                   ) : (
-                    <EyeOff size={25} color="#727A67" />
+                    <EyeOff size={25} color={tokens.onSurfaceVariant} />
                   )}
                 </TouchableOpacity>
               </View>
@@ -176,7 +179,7 @@ const PasswordScreen = () => {
             >
               <Animated.View style={pressScale.style}>
                 {isSubmitting ? (
-                  <ActivityIndicator size="large" color="#FFFFFF" />
+                  <ActivityIndicator size="large" color={tokens.onAccent} />
                 ) : (
                   <Text className="text-lg font-medium text-on-primary">
                     Continuer
@@ -217,6 +220,6 @@ const styles = StyleSheet.create({
     height: 50,
     width: "100%",
     borderRadius: 8,
-    backgroundColor: "#3A6A00",
+    backgroundColor: tokens.accent,
   },
 });

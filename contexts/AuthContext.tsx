@@ -15,6 +15,10 @@ import {
   saveUser,
   getUser,
 } from "@/services/storage";
+import {
+  registerForPushNotifications,
+  unregisterFromPushNotifications,
+} from "@/services/push";
 
 export interface User {
   id: string;
@@ -70,13 +74,23 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         isAuthenticated: true,
       });
     } catch {
-      await clearAuth();
-      setState({
-        user: null,
-        isLoading: false,
-        isSubmitting: false,
-        isAuthenticated: false,
-      });
+      const cachedUser = await getUser();
+      if (cachedUser) {
+        setState({
+          user: cachedUser,
+          isLoading: false,
+          isSubmitting: false,
+          isAuthenticated: true,
+        });
+      } else {
+        await clearAuth();
+        setState({
+          user: null,
+          isLoading: false,
+          isSubmitting: false,
+          isAuthenticated: false,
+        });
+      }
     }
   }, []);
 
@@ -99,6 +113,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
           isSubmitting: false,
           isAuthenticated: true,
         });
+        // Register for push notifications on successful login
+        registerForPushNotifications();
       } catch (e) {
         console.log("Login error:", e);
 
@@ -122,6 +138,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         isSubmitting: false,
         isAuthenticated: true,
       });
+      registerForPushNotifications();
     } catch {
       setState((prev) => ({ ...prev, isSubmitting: false }));
       throw new Error("Inscription échouée");
@@ -144,6 +161,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     } catch {
       // ignore errors on logout
     }
+    unregisterFromPushNotifications();
     await clearAuth();
     setState({
       user: null,
