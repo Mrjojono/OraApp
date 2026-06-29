@@ -24,7 +24,14 @@
       "edgeToEdgeEnabled": true,
       "predictiveBackGestureEnabled": false,
       "package": "com.joankeli.OraApp",
-      "permissions": ["READ_SMS", "RECEIVE_SMS"]
+      "permissions": [
+        "READ_SMS",
+        "RECEIVE_SMS",
+        "android.permission.RECEIVE_BOOT_COMPLETED",
+        "android.permission.VIBRATE",
+        "android.permission.POST_NOTIFICATIONS"
+      ],
+      "googleServicesFile": "./google-services.json"
     },
     "web": {
       "output": "static",
@@ -40,6 +47,16 @@
         "projectId": "a2a376a8-ac4d-43d8-bbf8-ad23c2a1cfe9"
       }
     },
-    "plugins": []
+    "plugins": [
+      [
+        "expo-notifications",
+        {
+          "icon": "./assets/images/icon.png",
+          "color": "#0D0D0D",
+          "defaultChannel": "default",
+          "sounds": []
+        }
+      ]
+    ]
   }
 }

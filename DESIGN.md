@@ -5,17 +5,17 @@ colors:
   surface: '#1A1A1A'
   surface-dim: '#242424'
   on-surface: '#FFFFFF'
-  on-surface-variant: '#A5A5A5'
-  outline: '#2C2C2E'
-  accent: '#FF5A5F'
+  on-surface-variant: '#B0B0B0'
+  outline: '#4A4A4E'
+  accent: '#34C759'
   on-accent: '#FFFFFF'
-  accent-container: rgba(255,90,95,0.12)
+  accent-container: rgba(52,199,89,0.12)
   warning-bg: '#3A2A1A'
   warning-accent: '#FFC043'
   positive: '#30D158'
   negative: '#FF453A'
-  tab-inactive: '#A5A5A5'
-  text-muted: '#555555'
+  tab-inactive: '#B0B0B0'
+  text-muted: '#999999'
 typography:
   display-lg:
     fontFamily: Playfair Display
@@ -90,24 +90,24 @@ spacing:
 
 ## Brand & Style
 
-OraApp est un assistant de monitoring financier connecté à Orabank. Design inspiré de Revolut : dark mode premium, carte foncées sur fond noir, accent corail utilisé avec parcimonie.
+OraApp est un assistant de monitoring financier connecté à Orabank. Design inspiré de Revolut : dark mode premium, cartes foncées sur fond noir, accent vert utilisé avec parcimonie.
 
 Le style est **Dark Mode Fintech Premium** :
-- Fond #0D0D0D, cartes #1A1A1A, bordures fines #2C2C2E
+- Fond #0D0D0D, cartes #1A1A1A, bordures fines #4A4A4E
 - Aucun effet décoratif (zéro gradient, zéro glassmorphisme, zéro ombre portée)
-- L'accent corail (#FF5A5F) est un signal, pas une décoration
+- L'accent vert (#34C759) est un signal, pas une décoration
 - L'interface inspire confiance par sa rigueur sombre et premium
 - Mobile-first, conçu pour une utilisation en déplacement
 
 ## Colors
 
-L'accent corail (#FF5A5F) est utilisé avec parcimonie :
-- **Accent (#FF5A5F)** : Score, CTA, insights, tab active, icône Score dans QuickActions
+L'accent vert (#34C759) est utilisé avec parcimonie :
+- **Accent (#34C759)** : Score, CTA, insights, tab active, icône Score dans QuickActions
 - **Warning (#FFC043)** : Alertes et avertissements (amber)
 - **Positive (#30D158)** : Variations positives (+12%, +21 pts), soldes en hausse
 - **Negative (#FF453A)** : Dépenses, alertes urgentes
-- **Neutres** : Fond #0D0D0D, cartes #1A1A1A, bordures #2C2C2E
-- **Textes** : Primaire #FFFFFF, secondaire #A5A5A5 (contraste 4.7:1), muet #555555
+- **Neutres** : Fond #0D0D0D, cartes #1A1A1A, bordures #4A4A4E
+- **Textes** : Primaire #FFFFFF, secondaire #B0B0B0 (contraste 7.8:1), muet #999999
 
 ## Typography
 
@@ -121,7 +121,7 @@ L'accent corail (#FF5A5F) est utilisé avec parcimonie :
 
 - Layout vertical, gap 20px entre sections
 - Marges mobiles : 16px (padding latéral des sections dans le Content)
-- Cards : padding 20-24px, corner radius 14px, bordure 1px #2C2C2E
+- Cards : padding 20-24px, corner radius 14px, bordure 1px #4A4A4E
 - Tab bar flottante : capsule style, corner radius 16px, margin 16px
 - La hauteur des cartes est déterminée par le contenu
 - Pas de bento grid — les cartes s'empilent verticalement
@@ -129,11 +129,11 @@ L'accent corail (#FF5A5F) est utilisé avec parcimonie :
 ## Navigation
 
 - **Tab bar flottante** (capsule) : 4 sections (Accueil, Analyse, Score, Profil)
-- Fond #1A1A1A, bordure 1px #2C2C2E, corner radius 16px
+- Fond #1A1A1A, bordure 1px #4A4A4E, corner radius 16px
 - Icônes Phosphor outline, 20px
 - Label 9px/600 sous chaque icône
-- Tab active : icône + texte en corail #FF5A5F, fond rgba(255,90,95,0.12)
-- Tab inactive : icône + texte en #A5A5A5
+- Tab active : icône + texte en vert #34C759, fond rgba(52,199,89,0.12)
+- Tab inactive : icône + texte en #B0B0B0
 - Position : flottante en bas de l'écran, margin 16px
 
 ## Sections du Dashboard
@@ -143,12 +143,12 @@ L'accent corail (#FF5A5F) est utilisé avec parcimonie :
 - Label "Solde disponible" en #8E8E93 (13px/500)
 - Montant en display-lg (Playfair Display, 44px/700, #FFFFFF)
 - Changement (+12%) en positif #30D158
-- Sync indicator en #555555
+- Sync indicator en #999999
 
 ### Quick Actions
 - 4 cartes horizontales (#1A1A1A, radius 14px)
 - Icône 22px + label 10px/500 #8E8E93
-- **Score** : icône en corail #FF5A5F (point d'entrée principal)
+- **Score** : icône en vert #34C759 (point d'entrée principal)
 - Objectifs, Conseils, Aide : icônes blanches #FFFFFF
 
 ### AlertBanner (contextuel)
@@ -160,17 +160,17 @@ L'accent corail (#FF5A5F) est utilisé avec parcimonie :
 
 ### OraScore Card
 - Carte verticale (#1A1A1A, radius 14px, padding 20px)
-- Row 1 : label "OraScore" + badge "75/100 · Très bien" (corail sur fond rgba(255,90,95,0.12))
+- Row 1 : label "OraScore" + badge "75/100 · Très bien" (vert sur fond rgba(52,199,89,0.12))
 - Row 2 : score number (Playfair Display, 56px/700) + trend (#30D158)
 - Row 3 : gauge bar full-width (8px height, radius 4px, fill proportionnel)
-- Row 4 : detail (#A5A5A5) + CTA "Recommandations →" (corail #FF5A5F)
+- Row 4 : detail (#B0B0B0) + CTA "Recommandations →" (vert #34C759)
 - Score - label : BON, TRÈS BIEN, EXCELLENT
 
 ### Budget Card
 - Carte verticale (#1A1A1A, radius 14px, padding 20px, gap 16px)
-- Header : "Dépenses du mois" (#FFFFFF, 15px/600) + total (#A5A5A5)
+- Header : "Dépenses du mois" (#FFFFFF, 15px/600) + total (#B0B0B0)
 - 3 catégories maximum sur le dashboard (Logement/Alimentation/Transport)
-- Chaque catégorie : dot 8px + nom (#FFFFFF) + barre (6px) + montant (#A5A5A5)
+- Chaque catégorie : dot 8px + nom (#FFFFFF) + barre (6px) + montant (#B0B0B0)
 - Barres proportionnelles (40%→140px, 25%→90px, 15%→55px dans 342px)
 - "Voir toutes les catégories →" en corail
 - InsightRow fusionné : fond #242424, icon corail, title #FFFFFF, sub #D0D0D0
@@ -179,7 +179,7 @@ L'accent corail (#FF5A5F) est utilisé avec parcimonie :
 
 ### ScoreBar (réutilisable)
 - Barre horizontale, corner radius 4px, hauteur 8px
-- Fond #2C2C2E, fill couleur accent
+- Fond #4A4A4E, fill couleur accent
 - Utilisé dans ScoreCard, éligibilité, etc.
 
 ### InsightRow
@@ -190,18 +190,18 @@ L'accent corail (#FF5A5F) est utilisé avec parcimonie :
 
 ### Buttons (adaptés dark mode)
 - Primary : pas de filled — privilégier les CTA textuels en corail
-- Ghost : texte #A5A5A5
-- Secondary card : bordure 1px #2C2C2E
+- Ghost : texte #B0B0B0
+- Secondary card : bordure 1px #4A4A4E
 
 ### AdviceCard (dark mode)
-- Carte #1A1A1A, bordure 1px #2C2C2E, radius 14px
+- Carte #1A1A1A, bordure 1px #4A4A4E, radius 14px
 - **Sévérité INFO** : icon corail ou bleu
 - **Sévérité WARNING** : fond #3A2A1A, icon #FFC043
 - **Sévérité CRITICAL** : fond #3A1A1A, icon #FF453A
 
 ### Loading / Empty / Error
-- Loading : skeleton cards #2C2C2E avec pulse
-- Empty : icon 48px #555555 + texte #A5A5A5
+- Loading : skeleton cards #4A4A4E avec pulse
+- Empty : icon 48px #999999 + texte #B0B0B0
 - Error : icon warning + "Réessayer" en ghost
 - Offline : "Dernière sync" dans le header
 

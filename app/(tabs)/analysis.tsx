@@ -1,14 +1,22 @@
 import React, { useState, useRef, useCallback, useMemo } from "react";
-import { View, ScrollView, StyleSheet, Text, Pressable } from "react-native";
+import {
+  View,
+  ScrollView,
+  StyleSheet,
+  Text,
+  Pressable,
+  RefreshControl,
+} from "react-native";
 import {
   BottomSheetModal,
   BottomSheetView,
   BottomSheetScrollView,
+  BottomSheetBackdrop,
 } from "@gorhom/bottom-sheet";
+import type { BottomSheetBackdropProps } from "@gorhom/bottom-sheet";
 import { tokens } from "@/lib/tokens";
 import { analyseMockData } from "@/constants/mockData";
 import RevenueVariationChart from "@/components/RevenueVariationChart";
-import { BlurBackdrop } from "@/components/BlurBackdrop";
 import type { ExpenseCategory } from "@/types/expense";
 
 import SumCard from "@/components/analysis/SumCard";
@@ -31,6 +39,12 @@ const Analysis = () => {
 
   const [selectedCategory, setSelectedCategory] =
     useState<ExpenseCategory | null>(null);
+  const [refreshing, setRefreshing] = useState(false);
+
+  const onRefresh = useCallback(() => {
+    setRefreshing(true);
+    setTimeout(() => setRefreshing(false), 1500);
+  }, []);
 
   const categoriesSheetRef = useRef<BottomSheetModal>(null);
   const recurringSheetRef = useRef<BottomSheetModal>(null);
@@ -93,9 +107,10 @@ const Analysis = () => {
         style={styles.scroll}
         contentContainerStyle={styles.scrollContent}
         showsVerticalScrollIndicator={false}
+        refreshControl={
+          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+        }
       >
-        <Text style={styles.pageTitle}>Analyse</Text>
-
         <SumCard
           totalExpenses={data.totalExpenses}
           transactionCount={data.transactionCount}
@@ -161,7 +176,14 @@ const Analysis = () => {
         snapPoints={["45%"]}
         enablePanDownToClose
         backgroundStyle={{ backgroundColor: tokens.surface }}
-        backdropComponent={BlurBackdrop}
+        backdropComponent={(props: BottomSheetBackdropProps) => (
+          <BottomSheetBackdrop
+            {...props}
+            appearsOnIndex={0}
+            disappearsOnIndex={-1}
+            opacity={0.9}
+          />
+        )}
       >
         <BottomSheetView style={styles.sheetContent}>
           {selectedCategory && (
@@ -179,7 +201,14 @@ const Analysis = () => {
         snapPoints={["50%"]}
         enablePanDownToClose
         backgroundStyle={{ backgroundColor: tokens.surface }}
-        backdropComponent={BlurBackdrop}
+        backdropComponent={(props: BottomSheetBackdropProps) => (
+          <BottomSheetBackdrop
+            {...props}
+            appearsOnIndex={0}
+            disappearsOnIndex={-1}
+            opacity={0.9}
+          />
+        )}
       >
         <BottomSheetView style={styles.sheetContent}>
           <CategoryBreakdownSheet
@@ -195,7 +224,14 @@ const Analysis = () => {
         snapPoints={["45%"]}
         enablePanDownToClose
         backgroundStyle={{ backgroundColor: tokens.surface }}
-        backdropComponent={BlurBackdrop}
+        backdropComponent={(props: BottomSheetBackdropProps) => (
+          <BottomSheetBackdrop
+            {...props}
+            appearsOnIndex={0}
+            disappearsOnIndex={-1}
+            opacity={0.9}
+          />
+        )}
       >
         <BottomSheetView style={styles.sheetContent}>
           <RecurringSheet
@@ -214,7 +250,14 @@ const Analysis = () => {
         snapPoints={["45%"]}
         enablePanDownToClose
         backgroundStyle={{ backgroundColor: tokens.surface }}
-        backdropComponent={BlurBackdrop}
+        backdropComponent={(props: BottomSheetBackdropProps) => (
+          <BottomSheetBackdrop
+            {...props}
+            appearsOnIndex={0}
+            disappearsOnIndex={-1}
+            opacity={0.9}
+          />
+        )}
       >
         <BottomSheetView style={styles.sheetContent}>
           <VariableSheet
@@ -231,7 +274,14 @@ const Analysis = () => {
         snapPoints={MONTH_SNAP}
         enablePanDownToClose
         backgroundStyle={{ backgroundColor: tokens.surface }}
-        backdropComponent={BlurBackdrop}
+        backdropComponent={(props: BottomSheetBackdropProps) => (
+          <BottomSheetBackdrop
+            {...props}
+            appearsOnIndex={0}
+            disappearsOnIndex={-1}
+            opacity={0.9}
+          />
+        )}
       >
         <BottomSheetScrollView
           style={styles.sheetContent}
@@ -266,7 +316,7 @@ const Analysis = () => {
 
 const styles = StyleSheet.create({
   container: {
-    paddingTop: 40,
+    paddingTop: 0,
     flex: 1,
     backgroundColor: tokens.background,
   },
@@ -277,13 +327,6 @@ const styles = StyleSheet.create({
   scrollContent: {
     paddingBottom: 120,
     gap: 16,
-  },
-  pageTitle: {
-    fontSize: 22,
-    fontWeight: "600",
-    color: tokens.onSurface,
-    marginTop: 16,
-    paddingHorizontal: 8,
   },
   sheetContent: {
     padding: 24,

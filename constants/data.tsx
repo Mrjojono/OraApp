@@ -5,6 +5,7 @@ import {
   Banknote,
   ScrollText,
   Star,
+  BookOpen,
 } from "lucide-react-native";
 import { View } from "react-native";
 import { tokens } from "@/lib/tokens";
@@ -31,7 +32,7 @@ const TabIcon = ({
       marginBottom: 10,
       alignItems: "center",
       justifyContent: "center",
-      backgroundColor: focused ? "#FF5A5F20" : "transparent",
+      backgroundColor: focused ? "#34C75920" : "transparent",
     }}
   >
     <Icon size={ICON_SIZE} color={color} strokeWidth={2.5} />
@@ -59,6 +60,13 @@ export const tabs: AppTab[] = [
     title: "Score",
     icon: ({ focused, color }) => (
       <TabIcon focused={focused} color={color} icon={Star} />
+    ),
+  },
+  {
+    name: "education",
+    title: "Education",
+    icon: ({ focused, color }) => (
+      <TabIcon focused={focused} color={color} icon={BookOpen} />
     ),
   },
   {

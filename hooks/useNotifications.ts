@@ -38,12 +38,19 @@ export function useNotifications(): UseNotificationsReturn {
     loadingRef.current = true;
     try {
       const res = await fetchNotifications(page, limit);
+
+      // Fix : l'API peut renvoyer un shape inattendu — on sécurise chaque champ
+      const items: Notification[] = Array.isArray(res?.notifications)
+        ? res.notifications
+        : [];
+      const more: boolean = res?.hasMore ?? false;
+
       if (page === 1) {
-        setNotifications(res.notifications);
+        setNotifications(items);
       } else {
-        setNotifications((prev) => [...prev, ...res.notifications]);
+        setNotifications((prev) => [...prev, ...items]);
       }
-      setHasMore(res.hasMore);
+      setHasMore(more);
       pageRef.current = page;
     } catch (err: any) {
       setError(err.message || "Erreur de chargement");
@@ -58,7 +65,8 @@ export function useNotifications(): UseNotificationsReturn {
     try {
       await loadPage(1);
       const count = await fetchUnreadCount();
-      setUnreadCount(count);
+      console.log("[Notification] unread count initial:", count);
+      setUnreadCount(count ?? 0); // Fix : sécurise si l'API renvoie undefined
     } catch {
       // handled in loadPage
     } finally {
@@ -81,12 +89,14 @@ export function useNotifications(): UseNotificationsReturn {
     if (!isAuthenticated) return;
 
     const onNotif = (notification: Notification) => {
+      if (!notification) return; // Fix : guard contre payload vide
+      console.log("[Notification] reçue:", JSON.stringify(notification));
       setNotifications((prev) => [notification, ...prev]);
       setUnreadCount((prev) => prev + 1);
     };
 
     const onCount = (count: number) => {
-      setUnreadCount(count);
+      setUnreadCount(typeof count === "number" ? count : 0); // Fix : sécurise type
     };
 
     notificationSocket.onNotification(onNotif);
@@ -109,7 +119,7 @@ export function useNotifications(): UseNotificationsReturn {
     try {
       await loadPage(1);
       const count = await fetchUnreadCount();
-      setUnreadCount(count);
+      setUnreadCount(count ?? 0);
     } catch {
       // handled in loadPage
     } finally {

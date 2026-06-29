@@ -19,6 +19,7 @@ import {
   registerForPushNotifications,
   unregisterFromPushNotifications,
 } from "@/services/push";
+import { notificationSocket } from "@/services/socket";
 
 export interface User {
   id: string;
@@ -67,6 +68,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       const res = await api.get("/auth/me");
       const user = res.data?.user ?? res.data;
       await saveUser(user);
+      if (token) notificationSocket.connect(token);
       setState({
         user,
         isLoading: false,
@@ -107,14 +109,14 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         console.log("RAW SERVER RESPONSE:", JSON.stringify(res.data, null, 2));
         await setTokens(accessToken, refreshToken);
         await saveUser(user);
+        notificationSocket.connect(accessToken);
         setState({
           user,
           isLoading: false,
           isSubmitting: false,
           isAuthenticated: true,
         });
-        // Register for push notifications on successful login
-        registerForPushNotifications();
+        await registerForPushNotifications();
       } catch (e) {
         console.log("Login error:", e);
 
@@ -132,13 +134,14 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       const { accessToken, refreshToken, user } = res.data;
       await setTokens(accessToken, refreshToken);
       await saveUser(user);
+      notificationSocket.connect(accessToken);
       setState({
         user,
         isLoading: false,
         isSubmitting: false,
         isAuthenticated: true,
       });
-      registerForPushNotifications();
+      await registerForPushNotifications();
     } catch {
       setState((prev) => ({ ...prev, isSubmitting: false }));
       throw new Error("Inscription échouée");
@@ -161,6 +164,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     } catch {
       // ignore errors on logout
     }
+    notificationSocket.disconnect();
     unregisterFromPushNotifications();
     await clearAuth();
     setState({

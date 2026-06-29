@@ -40,8 +40,6 @@ const styles = StyleSheet.create({
     padding: 20,
     flexDirection: "row",
     gap: 12,
-    borderWidth: 1,
-    borderColor: tokens.outline,
   },
   warningBg: {
     backgroundColor: tokens.warningBg,

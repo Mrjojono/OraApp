@@ -58,8 +58,6 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: tokens.surface,
     borderRadius: 8,
-    borderWidth: 1,
-    borderColor: tokens.outline,
     alignItems: "center",
     justifyContent: "center",
     gap: 6,

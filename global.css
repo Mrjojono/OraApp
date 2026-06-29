@@ -12,25 +12,25 @@
         --card-foreground: 0 0% 100%;
         --popover: 0 0% 10%;
         --popover-foreground: 0 0% 100%;
-        --primary: 3 100% 62%;
+        --primary: 135 59% 49%;
         --primary-foreground: 0 0% 100%;
         --secondary: 0 0% 14%;
         --secondary-foreground: 0 0% 100%;
         --muted: 0 0% 14%;
-        --muted-foreground: 0 0% 65%;
-        --accent: 3 100% 62%;
+        --muted-foreground: 0 0% 69%;
+        --accent: 135 59% 49%;
         --accent-foreground: 0 0% 100%;
-        --destructive: 3 100% 62%;
+        --destructive: 3.5 100% 61%;
         --destructive-foreground: 0 0% 100%;
-        --border: 0 0% 18%;
-        --input: 0 0% 18%;
-        --ring: 3 100% 62%;
+        --border: 240 3% 30%;
+        --input: 240 3% 30%;
+        --ring: 135 59% 49%;
         --radius: 0.5rem;
-        --chart-1: 3 100% 62%;
-        --chart-2: 0 0% 65%;
+        --chart-1: 135 59% 49%;
+        --chart-2: 0 0% 69%;
         --chart-3: 133 70% 55%;
         --chart-4: 39 100% 63%;
-        --chart-5: 3 100% 50%;
+        --chart-5: 135 59% 49%;
     }
 
     .dark:root {
@@ -40,19 +40,19 @@
         --card-foreground: 0 0% 100%;
         --popover: 0 0% 10%;
         --popover-foreground: 0 0% 100%;
-        --primary: 3 100% 62%;
+        --primary: 135 59% 49%;
         --primary-foreground: 0 0% 100%;
         --secondary: 0 0% 14%;
         --secondary-foreground: 0 0% 100%;
         --muted: 0 0% 14%;
-        --muted-foreground: 0 0% 65%;
-        --accent: 3 100% 62%;
+        --muted-foreground: 0 0% 69%;
+        --accent: 135 59% 49%;
         --accent-foreground: 0 0% 100%;
-        --destructive: 3 100% 62%;
+        --destructive: 3.5 100% 61%;
         --destructive-foreground: 0 0% 100%;
-        --border: 0 0% 18%;
-        --input: 0 0% 18%;
-        --ring: 3 100% 62%;
+        --border: 240 3% 30%;
+        --input: 240 3% 30%;
+        --ring: 135 59% 49%;
     }
 }
 
@@ -68,21 +68,21 @@
     --color-surface-container-high: #2C2C2E;
     --color-surface-container-highest: #2C2C2E;
     --color-on-surface: #FFFFFF;
-    --color-on-surface-variant: #A5A5A5;
+    --color-on-surface-variant: #B0B0B0;
     --color-inverse-surface: #FFFFFF;
     --color-inverse-on-surface: #0D0D0D;
-    --color-outline: #2C2C2E;
-    --color-outline-variant: #A5A5A5;
-    --color-surface-tint: #FF5A5F;
+    --color-outline: #4A4A4E;
+    --color-outline-variant: #B0B0B0;
+    --color-surface-tint: #34C759;
 
-    --color-input: #2C2C2E;
+    --color-input: #4A4A4E;
     --color-popover: #1A1A1A;
     --color-popover-foreground: #FFFFFF;
-    --color-muted-foreground: #A5A5A5;
-    --color-accent: #FF5A5F;
+    --color-muted-foreground: #B0B0B0;
+    --color-accent: #34C759;
     --color-accent-foreground: #FFFFFF;
-    --color-border: #2C2C2E;
-    --color-ring: #FF5A5F;
+    --color-border: #4A4A4E;
+    --color-ring: #34C759;
 
     --color-foreground: #FFFFFF;
     --color-background: #0D0D0D;
@@ -94,11 +94,11 @@
     --color-forest-night: #0D0D0D;
     --color-mint-subtle: #2C2C2E;
 
-    --color-primary: #FF5A5F;
+    --color-primary: #34C759;
     --color-on-primary: #FFFFFF;
-    --color-primary-container: rgba(255,90,95,0.12);
-    --color-on-primary-container: #FF5A5F;
-    --color-inverse-primary: #FF5A5F;
+    --color-primary-container: rgba(52,199,89,0.12);
+    --color-on-primary-container: #34C759;
+    --color-inverse-primary: #34C759;
 
     --color-secondary: #2C2C2E;
     --color-on-secondary: #FFFFFF;
@@ -115,10 +115,10 @@
     --color-error-container: rgba(255,69,58,0.12);
     --color-on-error-container: #FF453A;
 
-    --color-primary-fixed: #FF5A5F;
-    --color-primary-fixed-dim: rgba(255,90,95,0.8);
+    --color-primary-fixed: #34C759;
+    --color-primary-fixed-dim: rgba(52,199,89,0.8);
     --color-on-primary-fixed: #FFFFFF;
-    --color-on-primary-fixed-variant: #FF5A5F;
+    --color-on-primary-fixed-variant: #34C759;
 
     --color-secondary-fixed: #2C2C2E;
     --color-secondary-fixed-dim: #1A1A1A;
@@ -126,7 +126,7 @@
     --color-on-secondary-fixed-variant: #A5A5A5;
 
     --color-tertiary-fixed: #A5A5A5;
-    --color-tertiary-fixed-dim: #555555;
+    --color-tertiary-fixed-dim: #999999;
     --color-on-tertiary-fixed: #FFFFFF;
     --color-on-tertiary-fixed-variant: #A5A5A5;
 

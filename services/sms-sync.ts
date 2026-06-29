@@ -1,11 +1,14 @@
 import { api } from "./api";
-import { readAllSms } from "./sms-reader";
+import { readAllSms, requestSmsPermission } from "./sms-reader";
 
 const SMS_SYNC_URL = "/sms/sync";
 const CHUNK_SIZE = 100;
 
 export async function syncNewSms() {
   try {
+    const granted = await requestSmsPermission();
+    if (!granted) return { synced: 0 };
+
     const allSms = await readAllSms(500);
     if (allSms.length === 0) return { synced: 0 };
 

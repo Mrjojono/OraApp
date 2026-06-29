@@ -2,8 +2,10 @@ import { io, Socket } from "socket.io-client";
 import type { Notification } from "./notifications";
 
 const SOCKET_PATH =
-  process.env.EXPO_PUBLIC_API_URL?.replace(/^http/, "ws") + "/notifications" ||
-  "ws://localhost:3000/notifications";
+  (process.env.EXPO_PUBLIC_API_URL || "http://localhost:4000").replace(
+    /^http/,
+    "ws",
+  ) + "/notifications";
 
 class NotificationSocketManager {
   private socket: Socket | null = null;
@@ -20,6 +22,10 @@ class NotificationSocketManager {
       reconnection: true,
       reconnectionAttempts: Infinity,
       reconnectionDelay: 2000,
+    });
+
+    this.socket.onAny((event, ...args) => {
+      console.log("[Socket] event reçu:", event, JSON.stringify(args));
     });
 
     this.socket.on("connect", () => {

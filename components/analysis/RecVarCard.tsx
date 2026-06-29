@@ -15,7 +15,6 @@ type Props = {
 
 const FG = tokens.onSurface;
 const MFG = tokens.onSurfaceVariant;
-const BORDER = tokens.outline;
 const SURFACE = tokens.surface;
 
 export default function RecVarCard({
@@ -71,8 +70,6 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: SURFACE,
     borderRadius: 14,
-    borderWidth: 1,
-    borderColor: BORDER,
     padding: 20,
     gap: 12,
   },

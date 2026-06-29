@@ -6,15 +6,20 @@ import {
   RefreshControl,
   StyleSheet,
 } from "react-native";
-import { BottomSheetModal, BottomSheetView } from "@gorhom/bottom-sheet";
+import {
+  BottomSheetModal,
+  BottomSheetView,
+  BottomSheetBackdrop,
+  BottomSheetBackdropProps,
+} from "@gorhom/bottom-sheet";
 import { tokens } from "@/lib/tokens";
-import { HomeHeader } from "@/components/dashboard/HomeHeader";
 import { BalanceSection } from "@/components/dashboard/BalanceSection";
 import { QuickActions } from "@/components/dashboard/QuickActions";
 import { AlertBanner } from "@/components/dashboard/AlertBanner";
 import { OraScoreCard } from "@/components/dashboard/OraScoreCard";
 import { BudgetCard } from "@/components/dashboard/BudgetCard";
-import { BlurBackdrop } from "@/components/BlurBackdrop";
+import { syncNewSms } from "@/services/sms-sync";
+
 import {
   Home,
   Car,
@@ -58,7 +63,7 @@ const budgetItems = [
     key: "TRANSPORT",
     label: "Transport",
     amount: 57750,
-    color: "#4C9AFF",
+    color: tokens.positive,
     percent: 15,
     count: 5,
   },
@@ -182,9 +187,10 @@ const Index = () => {
   const [refreshing, setRefreshing] = useState(false);
   const budgetSheetRef = useRef<BottomSheetModal>(null);
 
-  const onRefresh = useCallback(() => {
+  const onRefresh = useCallback(async () => {
     setRefreshing(true);
-    setTimeout(() => setRefreshing(false), 2000);
+    await syncNewSms();
+    setRefreshing(false);
   }, []);
 
   const openBudgetSheet = useCallback(() => {
@@ -202,7 +208,6 @@ const Index = () => {
         contentContainerStyle={styles.scrollContent}
         showsVerticalScrollIndicator={false}
       >
-        <HomeHeader />
         <BalanceSection />
         <QuickActions />
         <AlertBanner />
@@ -215,7 +220,14 @@ const Index = () => {
         snapPoints={["50%"]}
         enablePanDownToClose
         backgroundStyle={{ backgroundColor: tokens.surface }}
-        backdropComponent={BlurBackdrop}
+        backdropComponent={(props: BottomSheetBackdropProps) => (
+          <BottomSheetBackdrop
+            {...props}
+            appearsOnIndex={0}
+            disappearsOnIndex={-1}
+            opacity={0.9}
+          />
+        )}
       >
         <BottomSheetView style={{ padding: 16 }}>
           <View style={styles.header}>

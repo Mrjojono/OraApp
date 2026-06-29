@@ -12,7 +12,6 @@ type Props = {
 const FG = tokens.onSurface;
 const MFG = tokens.onSurfaceVariant;
 const P = tokens.accent;
-const BORDER = tokens.outline;
 const SURFACE = tokens.surface;
 
 function getRatioColor(ratio: number): string {
@@ -72,8 +71,6 @@ const styles = StyleSheet.create({
   card: {
     backgroundColor: SURFACE,
     borderRadius: 14,
-    borderWidth: 1,
-    borderColor: BORDER,
     padding: 20,
     marginBottom: 12,
   },

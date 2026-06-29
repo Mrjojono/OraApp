@@ -40,7 +40,7 @@ const PasswordScreen = () => {
         return;
       }
       try {
-        await login({ contact: String(contact), password });
+        // await login({ contact: String(contact), password });
         router.push("/(tabs)");
       } catch {
         setError("Échec de la connexion. Vérifiez vos identifiants.");

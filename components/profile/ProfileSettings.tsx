@@ -60,8 +60,6 @@ const styles = StyleSheet.create({
   card: {
     backgroundColor: tokens.surface,
     borderRadius: 8,
-    borderWidth: 1,
-    borderColor: tokens.outline,
     paddingVertical: 4,
   },
   title: {

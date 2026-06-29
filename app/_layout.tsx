@@ -1,5 +1,7 @@
+import { useEffect } from "react";
 import { View } from "react-native";
-import { Stack } from "expo-router";
+import { Stack, useRouter } from "expo-router";
+import * as Notifications from "expo-notifications";
 import { useFonts } from "expo-font";
 import { BebasNeue_400Regular } from "@expo-google-fonts/bebas-neue";
 import {
@@ -20,6 +22,7 @@ import { BottomSheetModalProvider } from "@gorhom/bottom-sheet";
 import CustomAlert from "@/components/ui/CustomAlert";
 
 export default function RootLayout() {
+  const router = useRouter();
   const [loaded] = useFonts({
     BebasNeue_400Regular,
     DMSans_400Regular,
@@ -28,6 +31,16 @@ export default function RootLayout() {
     PlusJakartaSans_600SemiBold,
     PlusJakartaSans_700Bold,
   });
+
+  useEffect(() => {
+    Notifications.getLastNotificationResponseAsync().then((response) => {
+      if (!response) return;
+      const link = response.notification.request.content.data?.link;
+      if (typeof link === "string") {
+        router.push(link as any);
+      }
+    });
+  }, [router]);
 
   if (!loaded) {
     return null;

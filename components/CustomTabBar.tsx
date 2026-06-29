@@ -54,8 +54,6 @@ const CustomTabBar = ({
         height: CONFIG.height,
         borderRadius: CONFIG.radius,
         backgroundColor: tokens.surface,
-        borderWidth: 1,
-        borderColor: tokens.outline,
         flexDirection: "row",
         alignItems: "center",
         paddingHorizontal: 0,

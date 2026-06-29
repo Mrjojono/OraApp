@@ -1,4 +1,4 @@
-import { View, Text, FlatList, TouchableOpacity, ActivityIndicator } from "react-native";
+import { View, Text, FlatList, TouchableOpacity, ActivityIndicator, StyleSheet } from "react-native";
 import { useRouter } from "expo-router";
 import { ArrowLeft } from "lucide-react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
@@ -51,8 +51,8 @@ export default function NotificationsScreen() {
   const renderEmpty = () => {
     if (isLoading) return null;
     return (
-      <View className="flex-1 items-center justify-center py-20">
-        <Text style={{ color: tokens.onSurfaceVariant, fontSize: 15 }}>
+      <View style={styles.emptyWrap}>
+        <Text style={styles.emptyText}>
           {filter === "unread"
             ? "Aucune notification non lue"
             : "Aucune notification"}
@@ -61,80 +61,50 @@ export default function NotificationsScreen() {
     );
   };
 
+  const renderFooter = () => {
+    if (!hasMore || isLoading) return null;
+    return (
+      <View style={styles.footerLoader}>
+        <ActivityIndicator size="small" color={tokens.muted} />
+      </View>
+    );
+  };
+
   return (
-    <View style={{ flex: 1, backgroundColor: tokens.background }}>
-      <View
-        style={{
-          paddingTop: insets.top,
-          backgroundColor: tokens.background,
-        }}
-      >
-        <View
-          style={{
-            flexDirection: "row",
-            alignItems: "center",
-            justifyContent: "space-between",
-            paddingHorizontal: 16,
-            paddingVertical: 12,
-          }}
-        >
+    <View style={styles.screen}>
+      <View style={[styles.header, { paddingTop: insets.top }]}>
+        <View style={styles.headerRow}>
           <TouchableOpacity
             onPress={() => router.back()}
             hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
           >
             <ArrowLeft size={24} color={tokens.onSurface} />
           </TouchableOpacity>
-          <Text
-            style={{
-              fontSize: 20,
-              fontWeight: "600",
-              color: tokens.onSurface,
-            }}
-          >
-            Notifications
-          </Text>
-          {unreadCount > 0 && (
+          <Text style={styles.headerTitle}>Notifications</Text>
+          {unreadCount > 0 ? (
             <TouchableOpacity onPress={markAllRead}>
-              <Text
-                style={{
-                  fontSize: 13,
-                  color: tokens.accent,
-                  fontWeight: "500",
-                }}
-              >
-                Tout lu
-              </Text>
+              <Text style={styles.markAllRead}>Tout lu</Text>
             </TouchableOpacity>
+          ) : (
+            <View style={{ width: 50 }} />
           )}
         </View>
 
-        <View
-          style={{
-            flexDirection: "row",
-            paddingHorizontal: 16,
-            gap: 8,
-            paddingBottom: 12,
-          }}
-        >
+        <View style={styles.filterRow}>
           {(["all", "unread"] as Filter[]).map((f) => (
             <TouchableOpacity
               key={f}
               onPress={() => setFilter(f)}
-              style={{
-                paddingHorizontal: 16,
-                paddingVertical: 6,
-                borderRadius: 16,
-                backgroundColor:
-                  filter === f ? tokens.accent : tokens.surface,
-              }}
+              style={[
+                styles.filterChip,
+                filter === f && styles.filterChipActive,
+              ]}
             >
               <Text
-                style={{
-                  fontSize: 13,
-                  fontWeight: "500",
-                  color:
-                    filter === f ? tokens.onAccent : tokens.onSurfaceVariant,
-                }}
+                style={[
+                  styles.filterChipText,
+                  filter === f && styles.filterChipTextActive,
+                ]}
               >
                 {f === "all" ? "Toutes" : "Non lues"}
                 {f === "unread" && unreadCount > 0
@@ -147,7 +117,7 @@ export default function NotificationsScreen() {
       </View>
 
       {isLoading ? (
-        <View className="flex-1 items-center justify-center">
+        <View style={styles.loadingWrap}>
           <ActivityIndicator size="large" color={tokens.accent} />
         </View>
       ) : (
@@ -155,12 +125,9 @@ export default function NotificationsScreen() {
           data={filtered}
           renderItem={renderItem}
           keyExtractor={(item) => item.id}
-          contentContainerStyle={{
-            paddingHorizontal: 16,
-            paddingBottom: 40,
-            gap: 8,
-          }}
+          contentContainerStyle={styles.listContent}
           ListEmptyComponent={renderEmpty}
+          ListFooterComponent={renderFooter}
           onRefresh={refresh}
           refreshing={isRefreshing}
           onEndReached={loadMore}
@@ -172,3 +139,77 @@ export default function NotificationsScreen() {
     </View>
   );
 }
+
+const styles = StyleSheet.create({
+  screen: {
+    flex: 1,
+    backgroundColor: tokens.background,
+  },
+  header: {
+    backgroundColor: tokens.background,
+  },
+  headerRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    paddingHorizontal: 16,
+    paddingVertical: 12,
+  },
+  headerTitle: {
+    fontSize: 20,
+    fontWeight: "600",
+    color: tokens.onSurface,
+  },
+  markAllRead: {
+    fontSize: 13,
+    color: tokens.accent,
+    fontWeight: "500",
+  },
+  filterRow: {
+    flexDirection: "row",
+    paddingHorizontal: 16,
+    gap: 8,
+    paddingBottom: 12,
+  },
+  filterChip: {
+    paddingHorizontal: 16,
+    paddingVertical: 6,
+    borderRadius: 16,
+    backgroundColor: tokens.surface,
+  },
+  filterChipActive: {
+    backgroundColor: tokens.accent,
+  },
+  filterChipText: {
+    fontSize: 13,
+    fontWeight: "500",
+    color: tokens.onSurfaceVariant,
+  },
+  filterChipTextActive: {
+    color: tokens.onAccent,
+  },
+  loadingWrap: {
+    flex: 1,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  listContent: {
+    paddingHorizontal: 16,
+    paddingBottom: 40,
+    gap: 8,
+  },
+  emptyWrap: {
+    flex: 1,
+    alignItems: "center",
+    justifyContent: "center",
+    paddingVertical: 80,
+  },
+  emptyText: {
+    color: tokens.onSurfaceVariant,
+    fontSize: 15,
+  },
+  footerLoader: {
+    paddingVertical: 16,
+    alignItems: "center",
+  },
+});

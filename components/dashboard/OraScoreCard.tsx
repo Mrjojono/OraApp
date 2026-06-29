@@ -56,8 +56,6 @@ const styles = StyleSheet.create({
     marginBottom: 20,
     backgroundColor: tokens.surface,
     borderRadius: 14,
-    borderWidth: 1,
-    borderColor: tokens.outline,
     padding: 14,
     gap: 10,
   },

@@ -37,8 +37,6 @@ const styles = StyleSheet.create({
     gap: 12,
     backgroundColor: tokens.surface,
     borderRadius: 8,
-    borderWidth: 1,
-    borderColor: tokens.outline,
     padding: 16,
   },
   cardPressed: {

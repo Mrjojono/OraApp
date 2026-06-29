@@ -12,7 +12,7 @@ export interface Notification {
     | "WEEKLY_DIGEST";
   title: string;
   body: string;
-  severity?: "info" | "warning" | "positive" | "negative";
+  severity?: string;
   isRead: boolean;
   createdAt: string;
   link?: string;
@@ -26,10 +26,6 @@ export interface NotificationsResponse {
   hasMore: boolean;
 }
 
-export interface UnreadCountResponse {
-  count: number;
-}
-
 export interface NotificationPreferences {
   pushEnabled: boolean;
   types: Record<string, boolean>;
@@ -40,12 +36,26 @@ export async function fetchNotifications(
   limit = 20,
 ): Promise<NotificationsResponse> {
   const res = await api.get("/notifications", { params: { page, limit } });
-  return res.data;
+  const data = res.data;
+  return {
+    notifications: data.items ?? data.notifications ?? [],
+    total: data.total ?? 0,
+    page: data.page ?? page,
+    limit: data.limit ?? limit,
+    hasMore: data.totalPages ? data.page < data.totalPages : data.hasMore ?? false,
+  };
 }
 
 export async function fetchUnreadCount(): Promise<number> {
-  const res = await api.get<UnreadCountResponse>("/notifications/unread");
-  return res.data.count;
+  const res = await api.get<any>("/notifications/unread");
+  console.log("[API] /notifications/unread raw response:", JSON.stringify(res.data));
+  if (typeof res.data === "number") return res.data;
+  if (res.data?.count !== undefined) return res.data.count;
+  if (res.data?.unreadCount !== undefined) return res.data.unreadCount;
+  if (Array.isArray(res.data?.items)) {
+    return res.data.items.filter((n: any) => !n.isRead).length;
+  }
+  return 0;
 }
 
 export async function markAsRead(id: string): Promise<void> {
@@ -71,6 +81,7 @@ export async function fetchPreferences(): Promise<NotificationPreferences> {
   const res = await api.get<NotificationPreferences>(
     "/notifications/preferences",
   );
+  console.log(res.data);
   return res.data;
 }
 
