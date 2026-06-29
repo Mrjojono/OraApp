@@ -1,10 +1,22 @@
-import { View, Text, FlatList, TouchableOpacity, ActivityIndicator, StyleSheet } from "react-native";
+import { useMemo, useState } from "react";
+import {
+  View,
+  Text,
+  FlatList,
+  TouchableOpacity,
+  ActivityIndicator,
+  StyleSheet,
+} from "react-native";
 import { useRouter } from "expo-router";
 import { ArrowLeft } from "lucide-react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { useMemo, useState } from "react";
 import { tokens } from "@/lib/tokens";
-import { useNotifications } from "@/hooks/useNotifications";
+import {
+  useNotificationList,
+  useMarkRead,
+  useMarkAllRead,
+} from "@/queries/useNotifications";
+import { useNotificationStore } from "@/stores/notificationStore";
 import NotificationCard from "@/components/notifications/NotificationCard";
 import type { Notification } from "@/services/notifications";
 
@@ -13,18 +25,18 @@ type Filter = "all" | "unread";
 export default function NotificationsScreen() {
   const insets = useSafeAreaInsets();
   const router = useRouter();
+  const notifications = useNotificationStore((s) => s.notifications);
+  const unreadCount = useNotificationStore((s) => s.unreadCount);
   const {
-    notifications,
-    unreadCount,
     isLoading,
-    isRefreshing,
-    hasMore,
-    error,
-    loadMore,
-    refresh,
-    markRead,
-    markAllRead,
-  } = useNotifications();
+    isFetchingNextPage,
+    hasNextPage,
+    fetchNextPage,
+    refetch,
+    isRefetching,
+  } = useNotificationList();
+  const markReadMut = useMarkRead();
+  const markAllReadMut = useMarkAllRead();
 
   const [filter, setFilter] = useState<Filter>("all");
 
@@ -37,7 +49,7 @@ export default function NotificationsScreen() {
   );
 
   const handlePress = (n: Notification) => {
-    if (!n.isRead) markRead(n.id);
+    if (!n.isRead) markReadMut.mutate(n.id);
     if (n.link) router.push(n.link as any);
   };
 
@@ -62,7 +74,7 @@ export default function NotificationsScreen() {
   };
 
   const renderFooter = () => {
-    if (!hasMore || isLoading) return null;
+    if (!hasNextPage || isFetchingNextPage) return null;
     return (
       <View style={styles.footerLoader}>
         <ActivityIndicator size="small" color={tokens.muted} />
@@ -82,7 +94,7 @@ export default function NotificationsScreen() {
           </TouchableOpacity>
           <Text style={styles.headerTitle}>Notifications</Text>
           {unreadCount > 0 ? (
-            <TouchableOpacity onPress={markAllRead}>
+            <TouchableOpacity onPress={() => markAllReadMut.mutate()}>
               <Text style={styles.markAllRead}>Tout lu</Text>
             </TouchableOpacity>
           ) : (
@@ -128,9 +140,11 @@ export default function NotificationsScreen() {
           contentContainerStyle={styles.listContent}
           ListEmptyComponent={renderEmpty}
           ListFooterComponent={renderFooter}
-          onRefresh={refresh}
-          refreshing={isRefreshing}
-          onEndReached={loadMore}
+          onRefresh={refetch}
+          refreshing={isRefetching}
+          onEndReached={() => {
+            if (hasNextPage) fetchNextPage();
+          }}
           onEndReachedThreshold={0.3}
           showsVerticalScrollIndicator={false}
           ItemSeparatorComponent={() => <View style={{ height: 8 }} />}

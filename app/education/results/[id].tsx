@@ -1,12 +1,15 @@
-import { useMemo } from "react";
-import { View, Text, ScrollView, Pressable, StyleSheet } from "react-native";
+import { useMemo, useEffect, useRef } from "react";
+import { View, Text, ScrollView, Pressable, StyleSheet, Animated } from "react-native";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Home, RotateCcw } from "lucide-react-native";
 import { tokens } from "@/lib/tokens";
-import { mockPaths } from "@/constants/mockEducation";
+import { useEducationPath } from "@/queries/useEducation";
+import { SkeletonCard } from "@/components/ui/Skeleton";
+import { ErrorState } from "@/components/ui/ErrorState";
 import { ScoreCircle } from "@/components/education/ScoreCircle";
 import { ReviewCard } from "@/components/education/ReviewCard";
+import { BackLink } from "@/components/ui/back-button";
 
 export default function Results() {
   const { id, score, correct, total, answers: answersRaw } =
@@ -18,21 +21,44 @@ export default function Results() {
       answers: string;
     }>();
   const router = useRouter();
+  const insets = useSafeAreaInsets();
 
   const parts = id?.split("_") ?? [];
   const pathId = parts[0];
   const lessonId = parts[1];
 
-  const { quiz, lessonTitle } = useMemo(() => {
-    const path = mockPaths.find((p) => p.id === pathId);
-    const lesson = path?.lessons.find((l) => l.id === lessonId);
-    return { quiz: lesson?.quiz ?? null, lessonTitle: lesson?.title ?? "" };
-  }, [pathId, lessonId]);
+  const { data: path, isLoading, error, refetch } = useEducationPath(pathId);
+
+  if (isLoading) {
+    return (
+      <View style={[styles.container, { paddingTop: insets.top }]}>
+        <BackLink onPress={() => router.back()} />
+        <View style={styles.scroll}>
+          <View style={styles.scrollContent}>
+            <SkeletonCard />
+            <SkeletonCard />
+          </View>
+        </View>
+      </View>
+    );
+  }
+
+  if (error) {
+    return (
+      <View style={[styles.container, { paddingTop: insets.top }]}>
+        <BackLink onPress={() => router.back()} />
+        <ErrorState onRetry={refetch} />
+      </View>
+    );
+  }
+
+  const lesson = path?.lessons.find((l) => l.id === lessonId) ?? null;
+  const quiz = lesson?.quiz ?? null;
+  const lessonTitle = lesson?.title ?? "";
 
   const scoreNum = parseInt(score ?? "0", 10);
   const correctNum = parseInt(correct ?? "0", 10);
   const totalNum = parseInt(total ?? "0", 10);
-  const insets = useSafeAreaInsets();
   const answers: number[] = useMemo(() => {
     try {
       return answersRaw ? JSON.parse(answersRaw) : [];
@@ -43,27 +69,51 @@ export default function Results() {
 
   const passed = scoreNum >= 70;
 
+  const heroScale = useRef(new Animated.Value(0.8)).current;
+  const heroOpacity = useRef(new Animated.Value(0)).current;
+
+  useEffect(() => {
+    Animated.parallel([
+      Animated.spring(heroScale, {
+        toValue: 1,
+        friction: 6,
+        tension: 40,
+        useNativeDriver: true,
+      }),
+      Animated.timing(heroOpacity, {
+        toValue: 1,
+        duration: 300,
+        useNativeDriver: true,
+      }),
+    ]).start();
+  }, []);
+
+  // TODO: persister le statut "completed" via API quand le backend sera prêt
+
   return (
     <View style={[styles.container, { paddingTop: insets.top }]}>
+      <BackLink onPress={() => router.replace(`/education/path/${pathId}` as any)} />
+
       <ScrollView
         style={styles.scroll}
         contentContainerStyle={styles.scrollContent}
         showsVerticalScrollIndicator={false}
       >
-        <View style={styles.hero}>
+        <Animated.View style={[styles.hero, { opacity: heroOpacity, transform: [{ scale: heroScale }] }]}>
           <ScoreCircle score={scoreNum} />
-          <Text style={styles.title}>
+          <Text style={styles.lessonContext}>{lessonTitle}</Text>
+          <Text style={[styles.title, passed && styles.titlePassed]}>
             {passed ? "Bravo !" : "Continuez à apprendre"}
           </Text>
           <Text style={styles.subtitle}>
             {passed
               ? "Vous avez réussi ce quiz !"
-              : "Revisions et réessayez"}
+              : "Révisez et réessayez"}
           </Text>
           <Text style={styles.detail}>
             {correctNum}/{totalNum} bonnes réponses
           </Text>
-        </View>
+        </Animated.View>
 
         {quiz?.questions.map((q, i) => (
           <ReviewCard
@@ -79,9 +129,7 @@ export default function Results() {
 
       <View style={styles.footer}>
         <Pressable
-          onPress={() =>
-            router.replace(`/education/path/${pathId}` as any)
-          }
+          onPress={() => router.replace(`/education/path/${pathId}` as any)}
           style={({ pressed }) => [
             styles.btnPrimary,
             pressed && { opacity: 0.85 },
@@ -131,10 +179,18 @@ const styles = StyleSheet.create({
     color: tokens.onSurface,
     fontFamily: "DMSans_700Bold",
   },
+  titlePassed: {
+    color: tokens.accent,
+  },
   subtitle: {
     fontSize: 15,
     color: tokens.onSurfaceVariant,
     fontFamily: "DMSans_400Regular",
+  },
+  lessonContext: {
+    fontSize: 12,
+    color: tokens.onSurfaceVariant,
+    fontFamily: "DMSans_500Medium",
   },
   detail: {
     fontSize: 14,

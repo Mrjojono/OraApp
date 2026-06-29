@@ -43,7 +43,7 @@ const TabLayout = () => {
   if (!isAuthenticated) return null;
 
   return (
-    <View style={{ flex: 1 }}>
+    <View style={{ flex: 1, backgroundColor: tokens.background }}>
       <Tabs
         screenOptions={{
           header: () => <HomeHeader />,

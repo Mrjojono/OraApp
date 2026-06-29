@@ -5,7 +5,9 @@ import {
   ScrollView,
   RefreshControl,
   StyleSheet,
+  Pressable,
 } from "react-native";
+import { useRouter } from "expo-router";
 import {
   BottomSheetModal,
   BottomSheetView,
@@ -184,8 +186,10 @@ const styles = StyleSheet.create({
 });
 
 const Index = () => {
+  const router = useRouter();
   const [refreshing, setRefreshing] = useState(false);
   const budgetSheetRef = useRef<BottomSheetModal>(null);
+  const alertSheetRef = useRef<BottomSheetModal>(null);
 
   const onRefresh = useCallback(async () => {
     setRefreshing(true);
@@ -195,6 +199,30 @@ const Index = () => {
 
   const openBudgetSheet = useCallback(() => {
     budgetSheetRef.current?.present();
+  }, []);
+
+  const onQuickAction = useCallback(
+    (label: string) => {
+      switch (label) {
+        case "Score":
+          router.push("/(tabs)/score");
+          break;
+        case "Objectifs":
+          router.push("/objectifs");
+          break;
+        case "Conseils":
+          router.push("/conseils");
+          break;
+        case "Aide":
+          router.push("/aide");
+          break;
+      }
+    },
+    [router],
+  );
+
+  const openAlertDetail = useCallback(() => {
+    alertSheetRef.current?.present();
   }, []);
 
   return (
@@ -209,9 +237,9 @@ const Index = () => {
         showsVerticalScrollIndicator={false}
       >
         <BalanceSection />
-        <QuickActions />
-        <AlertBanner />
-        <OraScoreCard />
+        <QuickActions onPress={onQuickAction} />
+        <AlertBanner onPress={openAlertDetail} />
+        <OraScoreCard onCtaPress={() => router.push("/conseils")} />
         <BudgetCard onSeeAll={openBudgetSheet} />
       </ScrollView>
 
@@ -288,6 +316,88 @@ const Index = () => {
               </View>
             );
           })}
+        </BottomSheetView>
+      </BottomSheetModal>
+
+      <BottomSheetModal
+        ref={alertSheetRef}
+        snapPoints={["45%"]}
+        enablePanDownToClose
+        backgroundStyle={{ backgroundColor: tokens.surface }}
+        backdropComponent={(props: BottomSheetBackdropProps) => (
+          <BottomSheetBackdrop
+            {...props}
+            appearsOnIndex={0}
+            disappearsOnIndex={-1}
+            opacity={0.9}
+          />
+        )}
+      >
+        <BottomSheetView style={{ padding: 24, gap: 16 }}>
+          <Text style={[styles.headerTitle, { fontSize: 17 }]}>
+            Risque de découvert
+          </Text>
+
+          <View style={styles.item}>
+            <Text style={styles.labelArea}>
+              <Text style={styles.label}>Jours à découvert ce mois</Text>
+              {"\n"}
+              <Text style={styles.subtitle}>8 jours sur 30</Text>
+            </Text>
+            <Text style={[styles.percent, { color: tokens.negative, fontSize: 16 }]}>
+              27%
+            </Text>
+          </View>
+
+          <View style={styles.item}>
+            <Text style={styles.labelArea}>
+              <Text style={styles.label}>Frais de découvert estimés</Text>
+              {"\n"}
+              <Text style={styles.subtitle}>3 transactions imputées cette semaine</Text>
+            </Text>
+            <Text style={[styles.percent, { color: tokens.warning, fontSize: 16 }]}>
+              12 500 F
+            </Text>
+          </View>
+
+          <View style={styles.item}>
+            <Text style={styles.labelArea}>
+              <Text style={styles.label}>Dernière période négative</Text>
+              {"\n"}
+              <Text style={styles.subtitle}>Du 15 au 22 juin 2026</Text>
+            </Text>
+            <Text style={[styles.percent, { color: tokens.negative, fontSize: 16 }]}>
+              -8 400 F
+            </Text>
+          </View>
+
+          <Pressable
+            onPress={() => {
+              alertSheetRef.current?.close();
+              router.push("/securite");
+            }}
+            style={({ pressed }) => [
+              {
+                backgroundColor: tokens.accent,
+                borderRadius: 10,
+                height: 48,
+                alignItems: "center",
+                justifyContent: "center",
+                marginTop: 8,
+                opacity: pressed ? 0.7 : 1,
+              },
+            ]}
+          >
+            <Text
+              style={{
+                fontFamily: "DMSans_600SemiBold",
+                fontSize: 15,
+                color: "#FFFFFF",
+              }}
+            >
+              Activer les alertes
+            </Text>
+          </Pressable>
         </BottomSheetView>
       </BottomSheetModal>
     </View>

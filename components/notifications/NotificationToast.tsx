@@ -7,44 +7,37 @@ import {
   View,
 } from "react-native";
 import { useRouter } from "expo-router";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { tokens } from "@/lib/tokens";
-import { notificationSocket } from "@/services/socket";
-import { useAuth } from "@/contexts/AuthContext";
+import { useNotificationStore } from "@/stores/notificationStore";
 import type { Notification } from "@/services/notifications";
 
 const AUTO_DISMISS = 4000;
 
 export function NotificationToast() {
-  const { isAuthenticated } = useAuth();
   const router = useRouter();
+  const insets = useSafeAreaInsets();
+  const latestNotif = useNotificationStore((s) => s.notifications[0]);
+  const prevIdRef = useRef<string | null>(null);
   const [notif, setNotif] = useState<Notification | null>(null);
   const opacity = useRef(new Animated.Value(0)).current;
   const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   useEffect(() => {
-    if (!isAuthenticated) return;
+    if (!latestNotif || latestNotif.id === prevIdRef.current) return;
+    prevIdRef.current = latestNotif.id;
 
-    const show = (notification: Notification) => {
-      if (!notification) return;
+    if (timerRef.current) clearTimeout(timerRef.current);
 
-      if (timerRef.current) clearTimeout(timerRef.current);
+    setNotif(latestNotif);
+    Animated.timing(opacity, {
+      toValue: 1,
+      duration: 250,
+      useNativeDriver: true,
+    }).start();
 
-      setNotif(notification);
-      Animated.timing(opacity, {
-        toValue: 1,
-        duration: 250,
-        useNativeDriver: true,
-      }).start();
-
-      timerRef.current = setTimeout(hide, AUTO_DISMISS);
-    };
-
-    notificationSocket.onNotification(show);
-    return () => {
-      notificationSocket.offNotification(show);
-      if (timerRef.current) clearTimeout(timerRef.current);
-    };
-  }, [isAuthenticated]);
+    timerRef.current = setTimeout(hide, AUTO_DISMISS);
+  }, [latestNotif]);
 
   const hide = () => {
     Animated.timing(opacity, {
@@ -57,7 +50,7 @@ export function NotificationToast() {
   if (!notif) return null;
 
   return (
-    <Animated.View style={[styles.wrapper, { opacity }]}>
+    <Animated.View style={[styles.wrapper, { opacity, paddingTop: insets.top + 8 }]}>
       <Pressable
         style={styles.toast}
         onPress={() => {

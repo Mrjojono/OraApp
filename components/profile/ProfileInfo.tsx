@@ -82,7 +82,7 @@ const styles = StyleSheet.create({
     color: tokens.onSurface,
   },
   rowBorder: {
-    borderBottomWidth: 1,
+    borderBottomWidth: 0,
     borderBottomColor: tokens.outline,
   },
 });

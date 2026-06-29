@@ -1,21 +1,18 @@
 import { View, Text, Pressable, StyleSheet } from "react-native";
 import {
-  Wallet,
-  PiggyBank,
-  CreditCard,
-  TrendingUp,
   BookOpen,
+  CreditCard,
+  CircleDollarSign,
+  Wallet,
+  TrendingUp,
+  PiggyBank,
 } from "lucide-react-native";
 import type { EducationPath } from "@/types/education";
 import { tokens } from "@/lib/tokens";
-import { ProgressBar } from "./ProgressBar";
+import { PathBadge } from "@/components/education/PathBadge";
 
 const iconMap: Record<string, React.ComponentType<{ size: number; color: string }>> = {
-  Wallet,
-  PiggyBank,
-  CreditCard,
-  TrendingUp,
-  BookOpen,
+  BookOpen, CreditCard, CircleDollarSign, Wallet, TrendingUp, PiggyBank,
 };
 
 interface Props {
@@ -25,58 +22,44 @@ interface Props {
 
 export function PathCard({ path, onPress }: Props) {
   const Icon = iconMap[path.iconName] || BookOpen;
-  const isComplete = path.status === "completed";
-  const statusLabel =
-    path.status === "recommended"
-      ? "Recommandé"
-      : path.status === "new"
-        ? "Nouveau"
-        : path.status === "in_progress"
-          ? "En cours"
-          : "Terminé";
-
-  const statusColors = {
-    background: isComplete
-      ? tokens.accentContainer
-      : path.status === "recommended"
-        ? tokens.accentContainer
-        : tokens.surfaceDim,
-    text: isComplete
-      ? tokens.accent
-      : path.status === "recommended"
-        ? tokens.accent
-        : tokens.onSurfaceVariant,
-  };
+  const completedCount = path.lessons.filter((l) => l.status === "completed").length;
+  const lessonCount = path.lessons.length;
+  const progress = lessonCount > 0 ? (completedCount / lessonCount) * 100 : 0;
+  const progressLabel =
+    progress >= 100
+      ? "Terminé"
+      : `${completedCount}/${lessonCount} leçons`;
 
   return (
     <Pressable
       onPress={onPress}
       style={({ pressed }) => [styles.card, pressed && styles.pressed]}
     >
-      <View style={styles.topRow}>
-        <View style={[styles.iconWrap, { backgroundColor: path.color + "20" }]}>
-          <Icon size={22} color={path.color} />
-        </View>
-        <View
-          style={[styles.badge, { backgroundColor: statusColors.background }]}
-        >
-          <Text style={[styles.badgeText, { color: statusColors.text }]}>
-            {statusLabel}
-          </Text>
-        </View>
+      <View style={styles.head}>
+        <Icon size={32} color={tokens.accent} />
+        <Text style={styles.title} numberOfLines={1}>
+          {path.title}
+        </Text>
+        <PathBadge category={path.category} />
       </View>
 
-      <Text style={styles.title}>{path.title}</Text>
-      <Text style={styles.subtitle}>{path.subtitle}</Text>
+      <Text style={styles.desc} numberOfLines={2}>
+        {path.description}
+      </Text>
 
-      <ProgressBar progress={path.progress} color={path.color} />
-
-      <View style={styles.meta}>
-        <Text style={styles.metaText}>
-          {path.completedCount}/{path.lessonCount} leçons
-        </Text>
-        <Text style={styles.metaDot}>·</Text>
-        <Text style={styles.metaText}>{path.estimatedTime}</Text>
+      <View style={styles.progRow}>
+        <Text style={styles.progLabel}>{progressLabel}</Text>
+        <View style={styles.barBg}>
+          <View
+            style={[
+              styles.barFill,
+              {
+                width: `${Math.min(100, Math.max(0, progress))}%`,
+                backgroundColor: progress >= 100 ? tokens.positive : tokens.accent,
+              },
+            ]}
+          />
+        </View>
       </View>
     </Pressable>
   );
@@ -85,57 +68,52 @@ export function PathCard({ path, onPress }: Props) {
 const styles = StyleSheet.create({
   card: {
     backgroundColor: tokens.surface,
-    borderRadius: 16,
+    borderRadius: 14,
     padding: 20,
     gap: 12,
+    borderWidth: 1,
+    borderColor: "#2C2C2E",
   },
   pressed: { opacity: 0.85 },
-  topRow: {
+  head: {
     flexDirection: "row",
-    justifyContent: "space-between",
     alignItems: "center",
-  },
-  iconWrap: {
-    width: 44,
-    height: 44,
-    borderRadius: 14,
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  badge: {
-    paddingHorizontal: 10,
-    paddingVertical: 4,
-    borderRadius: 8,
-  },
-  badgeText: {
-    fontSize: 11,
-    fontWeight: "600",
-    fontFamily: "DMSans_500Medium",
+    gap: 12,
   },
   title: {
-    fontSize: 18,
-    fontWeight: "700",
+    flex: 1,
+    fontSize: 15,
+    fontWeight: "600",
     color: tokens.onSurface,
-    fontFamily: "DMSans_700Bold",
+    fontFamily: "DMSans_600SemiBold",
   },
-  subtitle: {
-    fontSize: 13,
+  desc: {
+    fontSize: 11,
+    fontWeight: "500",
     color: tokens.onSurfaceVariant,
-    lineHeight: 18,
-    fontFamily: "DMSans_400Regular",
+    fontFamily: "DMSans_500Medium",
+    lineHeight: 16,
   },
-  meta: {
+  progRow: {
     flexDirection: "row",
     alignItems: "center",
-    gap: 6,
+    gap: 12,
   },
-  metaText: {
-    fontSize: 12,
-    color: tokens.onSurfaceVariant,
-    fontFamily: "DMSans_400Regular",
+  progLabel: {
+    fontSize: 11,
+    fontWeight: "500",
+    color: tokens.muted,
+    fontFamily: "DMSans_500Medium",
   },
-  metaDot: {
-    fontSize: 12,
-    color: tokens.outline,
+  barBg: {
+    flex: 1,
+    height: 8,
+    borderRadius: 4,
+    backgroundColor: "#2C2C2E",
+    overflow: "hidden",
+  },
+  barFill: {
+    height: 8,
+    borderRadius: 4,
   },
 });

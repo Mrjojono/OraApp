@@ -36,6 +36,7 @@ export interface EducationLesson {
   duration: string;
   status: LessonStatus;
   content: LessonContent[];
+  keyTakeaways?: string[];
   quiz?: EducationQuiz;
 }
 

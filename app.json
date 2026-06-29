@@ -38,7 +38,7 @@
       "favicon": "./assets/images/favicon.png"
     },
     "experiments": {
-      "typedRoutes": true,
+      "typedRoutes": false,
       "reactCompiler": true
     },
     "extra": {
@@ -47,7 +47,19 @@
         "projectId": "a2a376a8-ac4d-43d8-bbf8-ad23c2a1cfe9"
       }
     },
+    "androidStatusBar": {
+      "barStyle": "light-content",
+      "backgroundColor": "#0D0D0D"
+    },
     "plugins": [
+      [
+        "expo-splash-screen",
+        {
+          "backgroundColor": "#0D0D0D",
+          "image": "./assets/images/splash-icon.png",
+          "imageWidth": 200
+        }
+      ],
       [
         "expo-notifications",
         {

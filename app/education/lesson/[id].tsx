@@ -1,89 +1,145 @@
-import { useMemo, useRef } from "react";
-import {
-  View,
-  Text,
-  ScrollView,
-  Pressable,
-  StyleSheet,
-} from "react-native";
+import { View, Text, ScrollView, Pressable, StyleSheet } from "react-native";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { ArrowLeft, Lightbulb } from "lucide-react-native";
+import { PlayCircle, Clock, ArrowRight } from "lucide-react-native";
 import { tokens } from "@/lib/tokens";
-import { mockPaths } from "@/constants/mockEducation";
-import { ProgressBar } from "@/components/education/ProgressBar";
-import type { LessonContent as LessonContentType } from "@/types/education";
+import { useEducationPath } from "@/queries/useEducation";
+import { SkeletonCard } from "@/components/ui/Skeleton";
+import { ErrorState } from "@/components/ui/ErrorState";
+import { LessonContent as LessonContentType } from "@/types/education";
+import { BackLink } from "@/components/ui/back-button";
+
+const badgeLabels: Record<string, string> = {
+  debutant: "DEBUTANT",
+  budget: "DEBUTANT",
+  epargne: "AVANCE",
+  credit: "INTERMEDIAIRE",
+  investissement: "DEBUTANT",
+};
 
 export default function Lesson() {
   const { id } = useLocalSearchParams<{ id: string }>();
   const router = useRouter();
+  const insets = useSafeAreaInsets();
 
   const parts = id?.split("_") ?? [];
   const pathId = parts[0];
   const lessonId = parts[1];
-  const insets = useSafeAreaInsets();
 
-  const lesson = useMemo(() => {
-    const path = mockPaths.find((p) => p.id === pathId);
-    return path?.lessons.find((l) => l.id === lessonId) ?? null;
-  }, [pathId, lessonId]);
+  const { data: path, isLoading, error, refetch } = useEducationPath(pathId);
 
-  if (!lesson) {
+  if (isLoading) {
     return (
-      <View style={styles.centered}>
-        <Text style={styles.errorText}>Leçon introuvable</Text>
-        <Pressable onPress={() => router.back()}>
-          <Text style={styles.backLink}>Retour</Text>
-        </Pressable>
+      <View style={[styles.container, { paddingTop: insets.top }]}>
+        <BackLink onPress={() => router.back()} />
+        <View style={styles.scroll}>
+          <View style={styles.scrollContent}>
+            <SkeletonCard />
+            <SkeletonCard />
+          </View>
+        </View>
       </View>
     );
   }
 
-  const handleContinue = () => {
-    router.push(`/education/quiz/${pathId}_${lesson.id}` as any);
-  };
+  if (error) {
+    return (
+      <View style={[styles.container, { paddingTop: insets.top }]}>
+        <BackLink onPress={() => router.back()} />
+        <ErrorState onRetry={refetch} />
+      </View>
+    );
+  }
+
+  const lesson = path?.lessons.find((l) => l.id === lessonId) ?? null;
+
+  if (!lesson || !path) {
+    return (
+      <View style={styles.centered}>
+        <Text style={styles.errorText}>Leçon introuvable</Text>
+      </View>
+    );
+  }
+
+  const badgeLabel = badgeLabels[path.category] || "DEBUTANT";
+
+  const currentLessonIndex = path.lessons.findIndex((l) => l.id === lessonId);
+  const nextLesson = currentLessonIndex >= 0
+    ? path.lessons[currentLessonIndex + 1] ?? null
+    : null;
 
   return (
     <View style={[styles.container, { paddingTop: insets.top }]}>
-      <View style={styles.header}>
-        <Pressable
-          onPress={() => router.back()}
-          style={({ pressed }) => [
-            styles.backBtn,
-            pressed && { opacity: 0.7 },
-          ]}
-        >
-          <ArrowLeft size={22} color={tokens.onSurface} />
-        </Pressable>
-        <Text style={styles.headerTitle}>{lesson.title}</Text>
-        <View style={styles.backBtn} />
-      </View>
+      <BackLink onPress={() => router.back()} />
 
       <ScrollView
         style={styles.scroll}
         contentContainerStyle={styles.scrollContent}
         showsVerticalScrollIndicator={false}
       >
-        <ProgressBar progress={33} color={tokens.accent} />
+        <Text style={styles.lessonTitle}>{lesson.title}</Text>
 
-        {lesson.content.map((block, i) => (
-          <ContentBlock key={i} block={block} />
-        ))}
+        <View style={styles.videoCard}>
+          <PlayCircle size={48} color={tokens.accent} />
+          <Text style={styles.videoLabel}>Contenu vidéo bientôt disponible</Text>
+        </View>
+
+        <View style={styles.infoRow}>
+          <View style={styles.badge}>
+            <Text style={styles.badgeText}>{badgeLabel}</Text>
+          </View>
+          <View style={styles.timeRow}>
+            <Clock size={14} color={tokens.onSurfaceVariant} />
+            <Text style={styles.timeText}>{lesson.duration}</Text>
+          </View>
+        </View>
+
+        <View style={styles.contentCard}>
+          <Text style={styles.contentCardTitle}>Contenu de la leçon</Text>
+          {lesson.content.map((block, i) => (
+            <ContentBlock key={i} block={block} />
+          ))}
+        </View>
+
+        {lesson.keyTakeaways && lesson.keyTakeaways.length > 0 && (
+          <View style={styles.summaryCard}>
+            <Text style={styles.summaryTitle}>A retenir</Text>
+            {lesson.keyTakeaways.map((item, i) => (
+              <View key={i} style={styles.summaryRow}>
+                <View style={styles.summaryBullet} />
+                <Text style={styles.summaryText}>{item}</Text>
+              </View>
+            ))}
+          </View>
+        )}
+
+        {nextLesson && nextLesson.status !== "locked" && (
+          <Pressable
+            onPress={() => router.replace(`/education/lesson/${path.id}_${nextLesson.id}` as any)}
+            style={({ pressed }) => [styles.nextLesson, pressed && { opacity: 0.8 }]}
+          >
+            <View style={styles.nextLessonContent}>
+              <Text style={styles.nextLessonLabel}>Leçon suivante</Text>
+              <Text style={styles.nextLessonTitle}>{nextLesson.title}</Text>
+            </View>
+            <ArrowRight size={18} color={tokens.accent} />
+          </Pressable>
+        )}
       </ScrollView>
 
-      <View style={styles.footer}>
-        <Pressable
-          onPress={handleContinue}
-          style={({ pressed }) => [
-            styles.continueBtn,
-            pressed && { opacity: 0.85 },
-          ]}
-        >
-          <Text style={styles.continueText}>
-            {lesson.quiz ? "Passer le quiz" : "Terminer"}
-          </Text>
-        </Pressable>
-      </View>
+      {lesson.quiz && (
+        <View style={styles.footer}>
+          <Pressable
+            onPress={() => router.replace(`/education/quiz/${path.id}_${lesson.id}` as any)}
+            style={({ pressed }) => [
+              styles.cta,
+              pressed && { opacity: 0.8 },
+            ]}
+          >
+            <Text style={styles.ctaText}>Passer le Quiz</Text>
+          </Pressable>
+        </View>
+      )}
     </View>
   );
 }
@@ -97,17 +153,16 @@ function ContentBlock({ block }: { block: LessonContentType }) {
         </Text>
       );
     case "highlight":
-      return (
-        <View key={block.text} style={styles.highlight}>
-          <Lightbulb size={18} color={tokens.warning} />
-          <Text style={styles.highlightText}>{block.text}</Text>
-        </View>
-      );
     case "tip":
       return (
-        <View key={block.text} style={styles.tip}>
-          <Lightbulb size={18} color={tokens.accent} />
-          <Text style={styles.tipText}>{block.text}</Text>
+        <View key={block.text} style={block.type === "highlight" ? styles.highlight : styles.tip}>
+          <Text
+            style={
+              block.type === "highlight" ? styles.highlightText : styles.tipText
+            }
+          >
+            {block.text}
+          </Text>
         </View>
       );
     case "bullet_list":
@@ -136,124 +191,204 @@ const styles = StyleSheet.create({
     backgroundColor: tokens.background,
     alignItems: "center",
     justifyContent: "center",
-    gap: 12,
   },
   errorText: {
     fontSize: 16,
     color: tokens.onSurfaceVariant,
     fontFamily: "DMSans_500Medium",
   },
-  backLink: {
-    fontSize: 14,
-    color: tokens.accent,
-    fontFamily: "DMSans_500Medium",
-  },
-  header: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
-    paddingHorizontal: 16,
-    paddingVertical: 12,
-  },
-  backBtn: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
-    backgroundColor: tokens.surface,
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  headerTitle: {
-    fontSize: 17,
-    fontWeight: "600",
-    color: tokens.onSurface,
-    fontFamily: "DMSans_600SemiBold",
-    flex: 1,
-    textAlign: "center",
-    marginHorizontal: 8,
-  },
   scroll: {
     flex: 1,
   },
   scrollContent: {
     padding: 16,
-    paddingBottom: 32,
-    gap: 18,
+    paddingBottom: 100,
+    gap: 16,
+  },
+  lessonTitle: {
+    fontSize: 20,
+    fontWeight: "600",
+    color: tokens.onSurface,
+    fontFamily: "DMSans_600SemiBold",
+    lineHeight: 26,
+  },
+  videoCard: {
+    height: 180,
+    borderRadius: 14,
+    backgroundColor: tokens.surface,
+    alignItems: "center",
+    justifyContent: "center",
+    gap: 12,
+  },
+  videoLabel: {
+    fontSize: 11,
+    color: tokens.onSurfaceVariant,
+    fontFamily: "DMSans_500Medium",
+  },
+  infoRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 12,
+  },
+  badge: {
+    paddingHorizontal: 10,
+    paddingVertical: 6,
+    borderRadius: 6,
+    backgroundColor: tokens.accentContainer,
+  },
+  badgeText: {
+    fontSize: 9,
+    fontWeight: "600",
+    color: tokens.accent,
+    fontFamily: "DMSans_600SemiBold",
+  },
+  timeRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 6,
+  },
+  timeText: {
+    fontSize: 11,
+    fontWeight: "500",
+    color: tokens.onSurfaceVariant,
+    fontFamily: "DMSans_500Medium",
+  },
+  contentCard: {
+    borderRadius: 14,
+    backgroundColor: tokens.surface,
+    borderWidth: 1,
+    borderColor: tokens.outline,
+    padding: 20,
+    gap: 12,
+  },
+  contentCardTitle: {
+    fontSize: 15,
+    fontWeight: "600",
+    color: tokens.onSurface,
+    fontFamily: "DMSans_600SemiBold",
   },
   paragraph: {
-    fontSize: 15,
-    color: tokens.onSurface,
+    fontSize: 12,
+    color: tokens.onSurfaceVariant,
     fontFamily: "DMSans_400Regular",
-    lineHeight: 22,
+    lineHeight: 17,
   },
   highlight: {
-    flexDirection: "row",
-    gap: 10,
     backgroundColor: tokens.warningBg,
-    borderRadius: 12,
-    padding: 14,
-    alignItems: "flex-start",
+    borderRadius: 10,
+    padding: 12,
   },
   highlightText: {
-    flex: 1,
-    fontSize: 14,
+    fontSize: 12,
     color: tokens.warning,
     fontFamily: "DMSans_400Regular",
-    lineHeight: 20,
+    lineHeight: 17,
   },
   tip: {
-    flexDirection: "row",
-    gap: 10,
     backgroundColor: tokens.accentContainer,
-    borderRadius: 12,
-    padding: 14,
-    alignItems: "flex-start",
+    borderRadius: 10,
+    padding: 12,
   },
   tipText: {
-    flex: 1,
-    fontSize: 14,
+    fontSize: 12,
     color: tokens.accent,
     fontFamily: "DMSans_400Regular",
-    lineHeight: 20,
+    lineHeight: 17,
   },
   bulletList: {
-    gap: 10,
-    paddingLeft: 4,
+    gap: 8,
   },
   bulletRow: {
     flexDirection: "row",
-    gap: 10,
+    gap: 8,
     alignItems: "flex-start",
   },
   bullet: {
-    width: 6,
-    height: 6,
-    borderRadius: 3,
+    width: 5,
+    height: 5,
+    borderRadius: 2.5,
     backgroundColor: tokens.accent,
-    marginTop: 8,
+    marginTop: 6,
   },
   bulletText: {
     flex: 1,
-    fontSize: 15,
-    color: tokens.onSurface,
+    fontSize: 12,
+    color: tokens.onSurfaceVariant,
     fontFamily: "DMSans_400Regular",
-    lineHeight: 22,
+    lineHeight: 17,
+  },
+  summaryCard: {
+    borderRadius: 14,
+    backgroundColor: "#3A2A1A",
+    padding: 20,
+    gap: 10,
+  },
+  summaryTitle: {
+    fontSize: 13,
+    fontWeight: "600",
+    color: tokens.onSurface,
+    fontFamily: "DMSans_600SemiBold",
+  },
+  summaryRow: {
+    flexDirection: "row",
+    gap: 8,
+    alignItems: "flex-start",
+  },
+  summaryBullet: {
+    width: 5,
+    height: 5,
+    borderRadius: 2.5,
+    backgroundColor: tokens.warning,
+    marginTop: 6,
+  },
+  summaryText: {
+    flex: 1,
+    fontSize: 11,
+    fontWeight: "500",
+    color: tokens.onSurfaceVariant,
+    fontFamily: "DMSans_500Medium",
+    lineHeight: 16,
+  },
+  nextLesson: {
+    flexDirection: "row",
+    alignItems: "center",
+    borderRadius: 14,
+    backgroundColor: tokens.surface,
+    borderWidth: 1,
+    borderColor: tokens.outline,
+    padding: 16,
+    gap: 12,
+  },
+  nextLessonContent: {
+    flex: 1,
+    gap: 4,
+  },
+  nextLessonLabel: {
+    fontSize: 10,
+    fontWeight: "500",
+    color: tokens.onSurfaceVariant,
+    fontFamily: "DMSans_500Medium",
+  },
+  nextLessonTitle: {
+    fontSize: 13,
+    fontWeight: "600",
+    color: tokens.onSurface,
+    fontFamily: "DMSans_600SemiBold",
   },
   footer: {
     padding: 16,
     paddingBottom: 40,
-    backgroundColor: tokens.background,
-  },
-  continueBtn: {
-    backgroundColor: tokens.accent,
-    borderRadius: 14,
-    paddingVertical: 16,
     alignItems: "center",
   },
-  continueText: {
-    fontSize: 16,
-    fontWeight: "700",
-    color: tokens.onAccent,
-    fontFamily: "DMSans_700Bold",
+  cta: {
+    paddingHorizontal: 32,
+    paddingVertical: 14,
+    borderRadius: 12,
+  },
+  ctaText: {
+    fontSize: 14,
+    fontWeight: "600",
+    color: tokens.accent,
+    fontFamily: "DMSans_600SemiBold",
   },
 });

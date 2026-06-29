@@ -1,52 +1,31 @@
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { StyleSheet, View, Text, Pressable } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useRouter } from "expo-router";
 import { Bell } from "lucide-react-native";
 import { tokens } from "@/lib/tokens";
 import { useAuth } from "@/contexts/AuthContext";
-import { fetchUnreadCount, type Notification } from "@/services/notifications";
-import { notificationSocket } from "@/services/socket";
+import { fetchUnreadCount } from "@/services/notifications";
+import { useNotificationStore } from "@/stores/notificationStore";
 
 export function HomeHeader() {
   const insets = useSafeAreaInsets();
   const { user, isAuthenticated } = useAuth();
   const router = useRouter();
-  const [badgeCount, setBadgeCount] = useState(0);
+  const badgeCount = useNotificationStore((s) => s.unreadCount);
+  const setUnreadCount = useNotificationStore((s) => s.setUnreadCount);
 
   const displayName = user?.username ?? user?.name ?? user?.email ?? "";
 
   useEffect(() => {
-    if (!isAuthenticated) {
-      setBadgeCount(0);
-      return;
-    }
+    if (!isAuthenticated) return;
 
     fetchUnreadCount()
       .then((count) => {
-        console.log("[HomeHeader] unread count initial:", count);
-        setBadgeCount(count);
+        setUnreadCount(count);
       })
       .catch(() => {});
-
-    const onNotif = (notification: Notification) => {
-      console.log("[HomeHeader] notification reçue:", JSON.stringify(notification));
-      setBadgeCount((prev) => prev + 1);
-    };
-
-    const onCount = (count: number) => {
-      console.log("[HomeHeader] unread count mis à jour:", count);
-      setBadgeCount(count);
-    };
-
-    notificationSocket.onNotification(onNotif);
-    notificationSocket.onUnreadCount(onCount);
-
-    return () => {
-      notificationSocket.offNotification(onNotif);
-      notificationSocket.offUnreadCount(onCount);
-    };
-  }, [isAuthenticated]);
+  }, [isAuthenticated, setUnreadCount]);
 
   return (
     <View style={[styles.container, { paddingTop: insets.top + 16 }]}>

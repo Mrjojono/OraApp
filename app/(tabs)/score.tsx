@@ -1,27 +1,48 @@
 import { useCallback, useMemo, useRef, useState } from "react";
-import { View, ScrollView, Text, StyleSheet, RefreshControl } from "react-native";
-import BottomSheet, { BottomSheetModal, BottomSheetScrollView, BottomSheetBackdrop } from "@gorhom/bottom-sheet";
+import { View, ScrollView, Text, StyleSheet, RefreshControl, Pressable } from "react-native";
+import { useRouter } from "expo-router";
+import { BottomSheetModal, BottomSheetScrollView, BottomSheetBackdrop } from "@gorhom/bottom-sheet";
 import type { BottomSheetBackdropProps } from "@gorhom/bottom-sheet";
 import { tokens } from "@/lib/tokens";
 import ScoreHero from "@/components/score/ScoreHero";
 import ScoreComponentCard from "@/components/score/ScoreComponentCard";
 import ComponentDetailSheet from "@/components/score/ComponentDetailSheet";
-import { mockScoreData } from "@/constants/mockScore";
+import { useScore } from "@/queries/useScore";
+import { SkeletonCard } from "@/components/ui/Skeleton";
+import { ErrorState } from "@/components/ui/ErrorState";
 import { COMPONENT_CONFIG } from "@/types/score";
 import type { ScoreComponent } from "@/types/score";
 
 const Score = () => {
-  const [refreshing, setRefreshing] = useState(false);
+  const router = useRouter();
   const [selectedComp, setSelectedComp] = useState<string | null>(null);
   const sheetRef = useRef<BottomSheetModal>(null);
+  const { data, isLoading, error, refetch, isRefetching } = useScore();
 
-  const data = mockScoreData;
+  if (isLoading) {
+    return (
+      <View style={styles.container}>
+        <View style={styles.scroll}>
+          <View style={styles.scrollContent}>
+            <SkeletonCard />
+            <SkeletonCard />
+            <SkeletonCard />
+            <SkeletonCard />
+          </View>
+        </View>
+      </View>
+    );
+  }
 
-  const onRefresh = useCallback(async () => {
-    setRefreshing(true);
-    await new Promise((r) => setTimeout(r, 1500));
-    setRefreshing(false);
-  }, []);
+  if (error) {
+    return (
+      <View style={styles.container}>
+        <ErrorState onRetry={refetch} />
+      </View>
+    );
+  }
+
+  if (!data) return null;
 
   const openDetail = useCallback((id: string) => {
     setSelectedComp(id);
@@ -63,7 +84,7 @@ const Score = () => {
         contentContainerStyle={styles.scrollContent}
         showsVerticalScrollIndicator={false}
         refreshControl={
-          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+          <RefreshControl refreshing={isRefetching} onRefresh={refetch} />
         }
       >
         <ScoreHero score={data.globalScore} label={data.label} history={data.history} />
@@ -132,7 +153,9 @@ const Score = () => {
             Votre score est très bas (29/100). Contactez votre conseiller bancaire
             pour un accompagnement personnalisé.
           </Text>
-          <Text style={styles.adviceCta}>Voir les recommandations →</Text>
+          <Pressable onPress={() => router.push("/conseils")}>
+            <Text style={styles.adviceCta}>Voir les recommandations →</Text>
+          </Pressable>
         </View>
 
         <View style={styles.card}>

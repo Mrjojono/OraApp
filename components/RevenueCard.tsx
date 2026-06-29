@@ -1,3 +1,4 @@
+import React from "react";
 import { View, Text, Pressable } from "react-native";
 import {
   Briefcase,
@@ -14,7 +15,7 @@ import { tokens } from "@/lib/tokens";
 const PRIMARY = tokens.accent;
 const WARNING = tokens.warning;
 
-const categoryIcons: Record<string, { icon: JSX.Element; bg: string }> = {
+const categoryIcons: Record<string, { icon: React.ReactNode; bg: string }> = {
   SALAIRE: {
     icon: <Briefcase size={16} color={PRIMARY} />,
     bg: tokens.surface,

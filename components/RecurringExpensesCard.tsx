@@ -1,3 +1,4 @@
+import React from "react";
 import { View, Text, Pressable } from "react-native";
 import {
   Home,
@@ -19,7 +20,7 @@ const FG = tokens.onSurface;
 const MFG = tokens.onSurfaceVariant;
 const ACCENT = tokens.surface;
 
-const categoryIcons: Record<string, { icon: JSX.Element; bg: string }> = {
+const categoryIcons: Record<string, { icon: React.ReactNode; bg: string }> = {
   LOGEMENT: { icon: <Home size={16} color={P} />, bg: ACCENT },
   NOURRITURE: { icon: <UtensilsCrossed size={16} color={P} />, bg: ACCENT },
   TRANSPORT: { icon: <Car size={16} color={P} />, bg: ACCENT },

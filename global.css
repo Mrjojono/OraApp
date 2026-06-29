@@ -144,3 +144,5 @@
 
     --container-max-width: 1200px;
 }
+
+body { background-color: hsl(var(--background)); }

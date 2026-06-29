@@ -27,7 +27,6 @@ const severityColor: Record<string, string> = {
   warning: tokens.warning,
   info: tokens.onSurfaceVariant,
   positive: tokens.positive,
-  negative: tokens.negative,
 };
 
 const severityLabel: Record<string, string> = {
@@ -76,24 +75,15 @@ export default function NotificationCard({
       onLongPress={onLongPress}
       style={({ pressed }) => [
         styles.card,
-        notification.isRead ? styles.cardRead : styles.cardUnread,
+        !notification.isRead && styles.cardUnread,
         pressed && styles.cardPressed,
       ]}
     >
-      <View style={[styles.severityStrip, { backgroundColor: sevColor }]} />
-
-      <View style={styles.iconWrap}>
-        <View
-          style={[
-            styles.iconCircle,
-            notification.isRead && styles.iconCircleRead,
-          ]}
-        >
-          <Icon
-            size={18}
-            color={notification.isRead ? tokens.muted : sevColor}
-          />
-        </View>
+      <View style={[styles.iconWrap, !notification.isRead && { backgroundColor: sevColor + "18" }]}>
+        <Icon
+          size={18}
+          color={notification.isRead ? tokens.muted : sevColor}
+        />
       </View>
 
       <View style={styles.body}>
@@ -101,31 +91,29 @@ export default function NotificationCard({
           <Text
             style={[
               styles.title,
-              notification.isRead ? styles.titleRead : styles.titleUnread,
+              !notification.isRead && styles.titleUnread,
             ]}
             numberOfLines={1}
           >
             {notification.title}
           </Text>
-          <Text style={styles.time}>{relativeTime(notification.createdAt)}</Text>
+          <Text style={styles.time}>
+            {relativeTime(notification.createdAt)}
+          </Text>
         </View>
 
         <Text style={styles.bodyText} numberOfLines={2}>
           {notification.body}
         </Text>
 
-        <View style={styles.metaRow}>
-          {sevLabel && (
-            <View style={[styles.severityBadge, { borderColor: sevColor }]}>
-              <View style={[styles.severityDot, { backgroundColor: sevColor }]} />
-              <Text style={[styles.severityLabel, { color: sevColor }]}>
-                {sevLabel}
-              </Text>
-            </View>
-          )}
-          {!notification.isRead && <View style={styles.unreadDot} />}
-        </View>
+        {sevLabel && (
+          <Text style={[styles.severity, { color: sevColor }]}>
+            {sevLabel}
+          </Text>
+        )}
       </View>
+
+      {!notification.isRead && <View style={styles.unreadDot} />}
     </Pressable>
   );
 }
@@ -133,42 +121,29 @@ export default function NotificationCard({
 const styles = StyleSheet.create({
   card: {
     flexDirection: "row",
+    alignItems: "flex-start",
+    backgroundColor: tokens.surface,
     borderRadius: 12,
-    overflow: "hidden",
+    padding: 14,
+    gap: 12,
   },
   cardUnread: {
-    backgroundColor: tokens.surface,
-  },
-  cardRead: {
-    backgroundColor: tokens.surface,
+    borderWidth: 1,
+    borderColor: tokens.outline,
   },
   cardPressed: {
     opacity: 0.85,
   },
-  severityStrip: {
-    width: 3,
-    alignSelf: "stretch",
-  },
   iconWrap: {
-    paddingLeft: 12,
-    paddingVertical: 14,
-  },
-  iconCircle: {
-    width: 38,
-    height: 38,
-    borderRadius: 19,
-    backgroundColor: tokens.accentContainer,
+    width: 36,
+    height: 36,
+    borderRadius: 10,
     alignItems: "center",
     justifyContent: "center",
-  },
-  iconCircleRead: {
-    backgroundColor: tokens.outline,
+    backgroundColor: tokens.surfaceDim,
   },
   body: {
     flex: 1,
-    paddingVertical: 14,
-    paddingRight: 14,
-    paddingLeft: 10,
     gap: 4,
   },
   titleRow: {
@@ -178,54 +153,35 @@ const styles = StyleSheet.create({
   },
   title: {
     fontSize: 14,
+    fontWeight: "400",
+    color: tokens.onSurface,
     flex: 1,
   },
   titleUnread: {
     fontWeight: "600",
-    color: tokens.onSurface,
-  },
-  titleRead: {
-    fontWeight: "400",
-    color: tokens.onSurface,
   },
   time: {
     fontSize: 11,
     color: tokens.onSurfaceVariant,
     marginLeft: 8,
+    flexShrink: 0,
   },
   bodyText: {
     fontSize: 13,
     color: tokens.onSurfaceVariant,
     lineHeight: 18,
   },
-  metaRow: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 8,
-    marginTop: 2,
-  },
-  severityBadge: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 4,
-    borderWidth: 1,
-    borderRadius: 4,
-    paddingHorizontal: 6,
-    paddingVertical: 2,
-  },
-  severityDot: {
-    width: 5,
-    height: 5,
-    borderRadius: 2.5,
-  },
-  severityLabel: {
-    fontSize: 10,
+  severity: {
+    fontSize: 11,
     fontWeight: "500",
+    marginTop: 2,
   },
   unreadDot: {
     width: 6,
     height: 6,
     borderRadius: 3,
     backgroundColor: tokens.accent,
+    marginTop: 6,
+    flexShrink: 0,
   },
 });

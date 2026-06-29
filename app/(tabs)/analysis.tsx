@@ -7,6 +7,7 @@ import {
   Pressable,
   RefreshControl,
 } from "react-native";
+import { useRouter } from "expo-router";
 import {
   BottomSheetModal,
   BottomSheetView,
@@ -15,7 +16,9 @@ import {
 } from "@gorhom/bottom-sheet";
 import type { BottomSheetBackdropProps } from "@gorhom/bottom-sheet";
 import { tokens } from "@/lib/tokens";
-import { analyseMockData } from "@/constants/mockData";
+import { useAnalysis } from "@/queries/useAnalysis";
+import { SkeletonCard } from "@/components/ui/Skeleton";
+import { ErrorState } from "@/components/ui/ErrorState";
 import RevenueVariationChart from "@/components/RevenueVariationChart";
 import type { ExpenseCategory } from "@/types/expense";
 
@@ -29,22 +32,27 @@ import CategoryDetailSheet from "@/components/analysis/CategoryDetailSheet";
 import RecurringSheet from "@/components/analysis/RecurringSheet";
 import VariableSheet from "@/components/analysis/VariableSheet";
 
+const MONTHS = [
+  { key: "2026-01", label: "Janvier 2026" },
+  { key: "2026-02", label: "Février 2026" },
+  { key: "2026-03", label: "Mars 2026" },
+  { key: "2026-04", label: "Avril 2026" },
+  { key: "2026-05", label: "Mai 2026" },
+  { key: "2026-06", label: "Juin 2026" },
+];
+
 const MONTH_SNAP = ["40%"];
 
 const Analysis = () => {
+  const router = useRouter();
   const [monthIndex, setMonthIndex] = useState(5);
-  const data = analyseMockData[monthIndex];
+  const monthKey = MONTHS[monthIndex].key;
+  const { data, isLoading, error, refetch, isRefetching } = useAnalysis(monthKey);
   const isFirst = monthIndex === 0;
-  const isLast = monthIndex === analyseMockData.length - 1;
+  const isLast = monthIndex === MONTHS.length - 1;
 
   const [selectedCategory, setSelectedCategory] =
     useState<ExpenseCategory | null>(null);
-  const [refreshing, setRefreshing] = useState(false);
-
-  const onRefresh = useCallback(() => {
-    setRefreshing(true);
-    setTimeout(() => setRefreshing(false), 1500);
-  }, []);
 
   const categoriesSheetRef = useRef<BottomSheetModal>(null);
   const recurringSheetRef = useRef<BottomSheetModal>(null);
@@ -85,18 +93,41 @@ const Analysis = () => {
   }, []);
 
   const goNext = useCallback(() => {
-    setMonthIndex((i) => Math.min(analyseMockData.length - 1, i + 1));
+    setMonthIndex((i) => Math.min(MONTHS.length - 1, i + 1));
   }, []);
+
+  if (isLoading) {
+    return (
+      <View style={styles.container}>
+        <ScrollView style={styles.scroll} contentContainerStyle={styles.scrollContent}>
+          <SkeletonCard />
+          <SkeletonCard />
+          <SkeletonCard />
+          <SkeletonCard />
+          <SkeletonCard />
+          <SkeletonCard />
+        </ScrollView>
+      </View>
+    );
+  }
+
+  if (error) {
+    return (
+      <View style={styles.container}>
+        <ErrorState onRetry={() => refetch()} />
+      </View>
+    );
+  }
 
   const selectedCategoryRecurring = useMemo(
     () =>
-      selectedCategory
+      selectedCategory && data
         ? data.recurring.filter((r) => r.category === selectedCategory.category)
         : [],
-    [selectedCategory, data.recurring],
+    [selectedCategory, data],
   );
 
-  const recurringTotal = data.recurring.reduce(
+  const recurringTotal = data!.recurring.reduce(
     (s, r) => s + r.averageAmount,
     0,
   );
@@ -108,14 +139,14 @@ const Analysis = () => {
         contentContainerStyle={styles.scrollContent}
         showsVerticalScrollIndicator={false}
         refreshControl={
-          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+          <RefreshControl refreshing={isRefetching} onRefresh={refetch} />
         }
       >
         <SumCard
-          totalExpenses={data.totalExpenses}
-          transactionCount={data.transactionCount}
-          averageTransaction={data.averageTransaction}
-          currentMonth={data.label}
+          totalExpenses={data!.totalExpenses}
+          transactionCount={data!.transactionCount}
+          averageTransaction={data!.averageTransaction}
+          currentMonth={data!.label}
           onPrevMonth={goPrev}
           onNextMonth={goNext}
           onMonthLabelPress={openMonthSheet}
@@ -124,50 +155,51 @@ const Analysis = () => {
         />
 
         <CategoriesCard
-          categories={data.categories}
+          categories={data!.categories}
           onPressCategory={openCategoryDetail}
           onPressSeeAll={openCategories}
         />
 
         <RecVarCard
           recurringTotal={recurringTotal}
-          recurringCount={data.recurring.length}
+          recurringCount={data!.recurring.length}
           recurringPercent={Math.round(
-            (data.recurring.reduce((s, r) => s + r.averageAmount, 0) /
-              data.totalExpenses) *
+            (data!.recurring.reduce((s, r) => s + r.averageAmount, 0) /
+              data!.totalExpenses) *
               100,
           )}
-          variableTotal={data.variable.totalAmount}
-          variableCount={data.variable.count}
-          variablePercent={data.variable.percent}
+          variableTotal={data!.variable.totalAmount}
+          variableCount={data!.variable.count}
+          variablePercent={data!.variable.percent}
           onPressRecurring={openRecurring}
           onPressVariable={openVariable}
         />
 
         <RatioCard
-          ratio={data.ratio.ratio}
-          label={data.ratio.label}
-          expensesAmount={data.ratio.expensesAmount}
-          revenueAmount={data.ratio.revenueAmount}
-          interpretation={data.ratio.interpretation}
+          ratio={data!.ratio.ratio}
+          label={data!.ratio.label}
+          expensesAmount={data!.ratio.expensesAmount}
+          revenueAmount={data!.ratio.revenueAmount}
+          interpretation={data!.ratio.interpretation}
         />
 
-        {data.advice && (
+        {data!.advice && (
           <AdviceCard
-            severity={data.advice.severity}
-            title={data.advice.title}
-            message={data.advice.message}
+            severity={data!.advice.severity}
+            title={data!.advice.title}
+            message={data!.advice.message}
+            onPress={() => router.push("/objectifs")}
           />
         )}
 
         <RevenueVariationChart
-          monthlyRevenues={data.revenueVariation.monthlyRevenues}
+          monthlyRevenues={data!.revenueVariation.monthlyRevenues}
           averageVariationPercent={
-            data.revenueVariation.averageVariationPercent
+            data!.revenueVariation.averageVariationPercent
           }
-          trend={data.revenueVariation.trend}
-          volatilityScore={data.revenueVariation.volatilityScore}
-          coefficientOfVariation={data.revenueVariation.coefficientOfVariation}
+          trend={data!.revenueVariation.trend}
+          volatilityScore={data!.revenueVariation.volatilityScore}
+          coefficientOfVariation={data!.revenueVariation.coefficientOfVariation}
         />
       </ScrollView>
 
@@ -186,7 +218,7 @@ const Analysis = () => {
         )}
       >
         <BottomSheetView style={styles.sheetContent}>
-          {selectedCategory && (
+          {selectedCategory && data && (
             <CategoryDetailSheet
               category={selectedCategory}
               totalExpenses={data.totalExpenses}
@@ -211,11 +243,13 @@ const Analysis = () => {
         )}
       >
         <BottomSheetView style={styles.sheetContent}>
-          <CategoryBreakdownSheet
-            categories={data.categories}
-            totalAmount={data.totalExpenses}
-            onPressCategory={openCategoryDetail}
-          />
+          {data && (
+            <CategoryBreakdownSheet
+              categories={data.categories}
+              totalAmount={data.totalExpenses}
+              onPressCategory={openCategoryDetail}
+            />
+          )}
         </BottomSheetView>
       </BottomSheetModal>
 
@@ -234,14 +268,16 @@ const Analysis = () => {
         )}
       >
         <BottomSheetView style={styles.sheetContent}>
-          <RecurringSheet
-            expenses={data.recurring}
-            totalAmount={data.recurring.reduce(
-              (s, r) => s + r.averageAmount,
-              0,
-            )}
-            totalCount={data.recurring.length}
-          />
+          {data && (
+            <RecurringSheet
+              expenses={data.recurring}
+              totalAmount={data.recurring.reduce(
+                (s, r) => s + r.averageAmount,
+                0,
+              )}
+              totalCount={data.recurring.length}
+            />
+          )}
         </BottomSheetView>
       </BottomSheetModal>
 
@@ -260,12 +296,14 @@ const Analysis = () => {
         )}
       >
         <BottomSheetView style={styles.sheetContent}>
-          <VariableSheet
-            transactions={data.variable.transactions}
-            totalAmount={data.variable.totalAmount}
-            totalCount={data.variable.count}
-            percent={data.variable.percent}
-          />
+          {data && (
+            <VariableSheet
+              transactions={data.variable.transactions}
+              totalAmount={data.variable.totalAmount}
+              totalCount={data.variable.count}
+              percent={data.variable.percent}
+            />
+          )}
         </BottomSheetView>
       </BottomSheetModal>
 
@@ -288,11 +326,11 @@ const Analysis = () => {
           contentContainerStyle={styles.monthSheetList}
         >
           <Text style={styles.monthSheetTitle}>Choisir un mois</Text>
-          {analyseMockData.map((m, i) => {
+          {MONTHS.map((m, i) => {
             const active = i === monthIndex;
             return (
               <Pressable
-                key={m.monthKey}
+                key={m.key}
                 onPress={() => selectMonth(i)}
                 style={[styles.monthRow, active && styles.monthRowActive]}
               >

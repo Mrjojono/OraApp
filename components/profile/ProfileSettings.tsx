@@ -1,29 +1,24 @@
 import { View, Text, Pressable, StyleSheet } from "react-native";
 import { Bell, Eye, Lock, Info } from "lucide-react-native";
 import { ChevronRight } from "lucide-react-native";
+import { useRouter } from "expo-router";
 import { tokens } from "@/lib/tokens";
-import { showAlert } from "@/components/ui/CustomAlert";
 
 type SettingItem = {
   icon: typeof Bell;
   label: string;
+  route: string;
 };
 
 const settings: SettingItem[] = [
-  { icon: Bell, label: "Notifications" },
-  { icon: Eye, label: "Confidentialité" },
-  { icon: Lock, label: "Sécurité" },
-  { icon: Info, label: "À propos" },
+  { icon: Bell, label: "Notifications", route: "/notifications" },
+  { icon: Eye, label: "Confidentialité", route: "/confidentialite" },
+  { icon: Lock, label: "Sécurité", route: "/securite" },
+  { icon: Info, label: "À propos", route: "/a-propos" },
 ];
 
 export default function ProfileSettings() {
-  const handlePress = async (label: string) => {
-    await showAlert({
-      title: label,
-      message: "Cette fonctionnalité sera bientôt disponible.",
-      buttons: [{ text: "OK" }],
-    });
-  };
+  const router = useRouter();
 
   return (
     <View style={styles.card}>
@@ -34,7 +29,7 @@ export default function ProfileSettings() {
         return (
           <Pressable
             key={s.label}
-            onPress={() => handlePress(s.label)}
+            onPress={() => router.push(s.route as any)}
             style={({ pressed }) => [
               styles.row,
               pressed && styles.rowPressed,
@@ -81,7 +76,7 @@ const styles = StyleSheet.create({
     backgroundColor: tokens.accentContainer,
   },
   rowBorder: {
-    borderBottomWidth: 1,
+    borderBottomWidth: 0,
     borderBottomColor: tokens.outline,
   },
   label: {

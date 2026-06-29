@@ -1,4 +1,4 @@
-import { View, Text, StyleSheet } from "react-native";
+import { View, Text, Pressable, StyleSheet } from "react-native";
 import { Lightbulb } from "lucide-react-native";
 import { tokens } from "@/lib/tokens";
 
@@ -6,9 +6,10 @@ type Props = {
   severity: "INFO" | "WARNING";
   title: string;
   message: string;
+  onPress?: () => void;
 };
 
-export default function AdviceCard({ severity, title, message }: Props) {
+export default function AdviceCard({ severity, title, message, onPress }: Props) {
   const isWarning = severity === "WARNING";
 
   return (
@@ -28,7 +29,9 @@ export default function AdviceCard({ severity, title, message }: Props) {
           {title}
         </Text>
         <Text style={styles.message}>{message}</Text>
-        <Text style={styles.cta}>Réduire de 10 000 F/mois →</Text>
+        <Pressable onPress={onPress}>
+          <Text style={styles.cta}>Réduire de 10 000 F/mois →</Text>
+        </Pressable>
       </View>
     </View>
   );

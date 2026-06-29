@@ -1,45 +1,74 @@
-import { useState, useMemo, useCallback } from "react";
+import { useState, useMemo, useCallback, useEffect, useRef } from "react";
 import {
   View,
   Text,
   ScrollView,
   Pressable,
   StyleSheet,
+  Animated,
 } from "react-native";
+import * as Haptics from "expo-haptics";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { ArrowLeft, X } from "lucide-react-native";
 import { tokens } from "@/lib/tokens";
-import { mockPaths } from "@/constants/mockEducation";
-import { ProgressBar } from "@/components/education/ProgressBar";
+import { useEducationPath } from "@/queries/useEducation";
+import { SkeletonCard } from "@/components/ui/Skeleton";
+import { ErrorState } from "@/components/ui/ErrorState";
 import { QuizOption } from "@/components/education/QuizOption";
+import { showAlert } from "@/components/ui/CustomAlert";
+import { BackLink } from "@/components/ui/back-button";
 
 export default function Quiz() {
   const { id } = useLocalSearchParams<{ id: string }>();
   const router = useRouter();
+  const insets = useSafeAreaInsets();
 
   const parts = id?.split("_") ?? [];
   const pathId = parts[0];
   const lessonId = parts[1];
-  const insets = useSafeAreaInsets();
 
-  const quiz = useMemo(() => {
-    const path = mockPaths.find((p) => p.id === pathId);
-    const lesson = path?.lessons.find((l) => l.id === lessonId);
-    return lesson?.quiz ?? null;
-  }, [pathId, lessonId]);
+  const { data: path, isLoading, error, refetch } = useEducationPath(pathId);
 
   const [currentIndex, setCurrentIndex] = useState(0);
   const [answers, setAnswers] = useState<number[]>([]);
-  const [showResult, setShowResult] = useState(false);
+
+  if (isLoading) {
+    return (
+      <View style={[styles.container, { paddingTop: insets.top }]}>
+        <BackLink onPress={() => router.back()} />
+        <View style={styles.scroll}>
+          <View style={styles.scrollContent}>
+            <SkeletonCard />
+            <SkeletonCard />
+          </View>
+        </View>
+      </View>
+    );
+  }
+
+  if (error) {
+    return (
+      <View style={[styles.container, { paddingTop: insets.top }]}>
+        <BackLink onPress={() => router.back()} />
+        <ErrorState onRetry={refetch} />
+      </View>
+    );
+  }
+
+  const lesson = path?.lessons.find((l) => l.id === lessonId) ?? null;
+  const quiz = lesson?.quiz ?? null;
+  const path_title = path?.title ?? "";
 
   if (!quiz || quiz.questions.length === 0) {
     return (
-      <View style={styles.centered}>
-        <Text style={styles.errorText}>Pas de quiz pour cette leçon</Text>
-        <Pressable onPress={() => router.back()}>
-          <Text style={styles.backLink}>Retour</Text>
-        </Pressable>
+      <View style={[styles.container, { paddingTop: insets.top }]}>
+        <BackLink onPress={() => router.back()} />
+        <View style={styles.centered}>
+          <Text style={styles.errorText}>Pas de quiz pour cette leçon</Text>
+          <Pressable onPress={() => router.back()}>
+            <Text style={styles.retourLink}>Retour</Text>
+          </Pressable>
+        </View>
       </View>
     );
   }
@@ -51,16 +80,29 @@ export default function Quiz() {
 
   const handleSelect = useCallback(
     (optionIndex: number) => {
-      if (showResult) return;
+      if (selectedIndex >= 0) return;
+      Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
       const next = [...answers];
       next[currentIndex] = optionIndex;
       setAnswers(next);
     },
-    [answers, currentIndex, showResult],
+    [answers, currentIndex, selectedIndex],
   );
+
+  const animValue = useRef(new Animated.Value(1)).current;
+
+  useEffect(() => {
+    animValue.setValue(0.85);
+    Animated.timing(animValue, {
+      toValue: 1,
+      duration: 200,
+      useNativeDriver: true,
+    }).start();
+  }, [currentIndex]);
 
   const handleNext = useCallback(() => {
     if (isLast) {
+      Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
       const correctCount = quiz.questions.filter(
         (q, i) => answers[i] === q.correctIndex,
       ).length;
@@ -69,6 +111,7 @@ export default function Quiz() {
         `/education/results/${pathId}_${lessonId}?score=${score}&correct=${correctCount}&total=${total}&answers=${JSON.stringify(answers)}` as any,
       );
     } else {
+      animValue.setValue(0.85);
       setCurrentIndex((i) => i + 1);
     }
   }, [isLast, quiz, answers, total, pathId, lessonId, router]);
@@ -77,61 +120,60 @@ export default function Quiz() {
 
   return (
     <View style={[styles.container, { paddingTop: insets.top }]}>
-      <View style={styles.header}>
-        <Pressable
-          onPress={() => router.back()}
-          style={({ pressed }) => [
-            styles.backBtn,
-            pressed && { opacity: 0.7 },
-          ]}
-        >
-          <ArrowLeft size={22} color={tokens.onSurface} />
-        </Pressable>
-        <Text style={styles.headerTitle}>
-          Question {currentIndex + 1}/{total}
-        </Text>
-        <Pressable
-          onPress={() => router.back()}
-          style={({ pressed }) => [
-            styles.backBtn,
-            pressed && { opacity: 0.7 },
-          ]}
-        >
-          <X size={20} color={tokens.onSurfaceVariant} />
-        </Pressable>
-      </View>
+      <BackLink
+        onPress={() => {
+          if (answers.length > 0) {
+            showAlert({
+              title: "Quitter le quiz ?",
+              message: "Votre progression sera perdue.",
+              buttons: [
+                { text: "Annuler", style: "cancel" },
+                { text: "Quitter", style: "destructive", onPress: () => router.replace(`/education/path/${pathId}` as any) },
+              ],
+            });
+          } else {
+            router.replace(`/education/path/${pathId}` as any);
+          }
+        }}
+      />
 
       <ScrollView
         style={styles.scroll}
         contentContainerStyle={styles.scrollContent}
         showsVerticalScrollIndicator={false}
       >
-        <ProgressBar progress={progressPercent} color={tokens.accent} height={6} />
+        <Text style={styles.quizTitle}>{path_title}</Text>
 
-        <Text style={styles.question}>{question.question}</Text>
+        <View style={styles.progRow}>
+          <Text style={styles.progLabel}>
+            Question {currentIndex + 1}/{total}
+          </Text>
+          <View style={styles.barBg}>
+            <View
+              style={[
+                styles.barFill,
+                { width: `${progressPercent}%` },
+              ]}
+            />
+          </View>
+        </View>
 
-        <View style={styles.options}>
+        <Animated.View style={[styles.questionCard, { opacity: animValue, transform: [{ scale: animValue }] }]}>
+          <Text style={styles.questionText}>{question.question}</Text>
+        </Animated.View>
+
+        <View style={styles.choices}>
           {question.options.map((opt, i) => (
             <QuizOption
               key={i}
               label={opt}
-              index={i}
               selected={selectedIndex === i}
-              correct={showResult ? i === question.correctIndex : null}
-              disabled={showResult || selectedIndex >= 0}
+              correct={selectedIndex >= 0 ? i === question.correctIndex : null}
+              disabled={selectedIndex >= 0}
               onPress={() => handleSelect(i)}
             />
           ))}
         </View>
-
-        {selectedIndex >= 0 && (
-          <View style={styles.explanationBox}>
-            <Text style={styles.explanationTitle}>
-              {selectedIndex === question.correctIndex ? "✓ Correct" : "✗ Incorrect"}
-            </Text>
-            <Text style={styles.explanation}>{question.explanation}</Text>
-          </View>
-        )}
       </ScrollView>
 
       <View style={styles.footer}>
@@ -139,15 +181,14 @@ export default function Quiz() {
           onPress={handleNext}
           disabled={selectedIndex < 0}
           style={({ pressed }) => [
-            styles.nextBtn,
-            selectedIndex < 0 && styles.nextBtnDisabled,
-            pressed && selectedIndex >= 0 && { opacity: 0.85 },
+            styles.cta,
+            pressed && selectedIndex >= 0 && { opacity: 0.8 },
           ]}
         >
           <Text
             style={[
-              styles.nextText,
-              selectedIndex < 0 && styles.nextTextDisabled,
+              styles.ctaText,
+              selectedIndex < 0 && styles.ctaTextDisabled,
             ]}
           >
             {isLast ? "Voir les résultats" : "Question suivante"}
@@ -175,89 +216,79 @@ const styles = StyleSheet.create({
     color: tokens.onSurfaceVariant,
     fontFamily: "DMSans_500Medium",
   },
-  backLink: {
+  retourLink: {
     fontSize: 14,
     color: tokens.accent,
     fontFamily: "DMSans_500Medium",
-  },
-  header: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
-    paddingHorizontal: 16,
-    paddingVertical: 12,
-  },
-  backBtn: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
-    backgroundColor: tokens.surface,
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  headerTitle: {
-    fontSize: 15,
-    fontWeight: "600",
-    color: tokens.onSurface,
-    fontFamily: "DMSans_600SemiBold",
   },
   scroll: {
     flex: 1,
   },
   scrollContent: {
     padding: 16,
-    paddingBottom: 32,
-    gap: 24,
+    paddingBottom: 100,
+    gap: 20,
   },
-  question: {
-    fontSize: 20,
-    fontWeight: "700",
+  quizTitle: {
+    fontSize: 22,
+    fontWeight: "600",
     color: tokens.onSurface,
-    fontFamily: "DMSans_700Bold",
-    lineHeight: 28,
+    fontFamily: "DMSans_600SemiBold",
   },
-  options: {
+  progRow: {
     gap: 12,
   },
-  explanationBox: {
-    backgroundColor: tokens.surface,
-    borderRadius: 14,
-    padding: 16,
-    gap: 6,
-  },
-  explanationTitle: {
-    fontSize: 15,
-    fontWeight: "700",
-    color: tokens.onSurface,
-    fontFamily: "DMSans_700Bold",
-  },
-  explanation: {
-    fontSize: 14,
+  progLabel: {
+    fontSize: 12,
+    fontWeight: "500",
     color: tokens.onSurfaceVariant,
-    fontFamily: "DMSans_400Regular",
-    lineHeight: 20,
+    fontFamily: "DMSans_500Medium",
+  },
+  barBg: {
+    height: 6,
+    borderRadius: 3,
+    backgroundColor: tokens.surfaceDim,
+    overflow: "hidden",
+  },
+  barFill: {
+    height: 6,
+    borderRadius: 3,
+    backgroundColor: tokens.accent,
+  },
+  questionCard: {
+    borderRadius: 14,
+    backgroundColor: tokens.surface,
+    borderWidth: 1,
+    borderColor: tokens.outline,
+    padding: 20,
+  },
+  questionText: {
+    fontSize: 15,
+    fontWeight: "500",
+    color: tokens.onSurface,
+    fontFamily: "DMSans_500Medium",
+    lineHeight: 22,
+  },
+  choices: {
+    gap: 10,
   },
   footer: {
     padding: 16,
     paddingBottom: 40,
-    backgroundColor: tokens.background,
+    alignItems: "flex-end",
   },
-  nextBtn: {
-    backgroundColor: tokens.accent,
-    borderRadius: 14,
-    paddingVertical: 16,
-    alignItems: "center",
+  cta: {
+    paddingHorizontal: 32,
+    paddingVertical: 14,
+    borderRadius: 12,
   },
-  nextBtnDisabled: {
-    backgroundColor: tokens.surfaceDim,
+  ctaText: {
+    fontSize: 14,
+    fontWeight: "600",
+    color: tokens.accent,
+    fontFamily: "DMSans_600SemiBold",
   },
-  nextText: {
-    fontSize: 16,
-    fontWeight: "700",
-    color: tokens.onAccent,
-    fontFamily: "DMSans_700Bold",
-  },
-  nextTextDisabled: {
-    color: tokens.onSurfaceVariant,
+  ctaTextDisabled: {
+    color: tokens.muted,
   },
 });

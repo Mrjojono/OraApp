@@ -1,98 +1,111 @@
-import { useRef, useMemo } from "react";
-import { View, Text, ScrollView, Pressable, StyleSheet } from "react-native";
+import { View, Text, ScrollView, StyleSheet } from "react-native";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { ArrowLeft, Clock } from "lucide-react-native";
+import { BookOpen, Clock } from "lucide-react-native";
 import { tokens } from "@/lib/tokens";
-import { mockPaths } from "@/constants/mockEducation";
+import { useEducationPath } from "@/queries/useEducation";
+import { SkeletonCard } from "@/components/ui/Skeleton";
+import { ErrorState } from "@/components/ui/ErrorState";
 import { LessonItem } from "@/components/education/LessonItem";
-import { ProgressBar } from "@/components/education/ProgressBar";
+import { BackLink } from "@/components/ui/back-button";
+import { PathBadge } from "@/components/education/PathBadge";
 
 export default function PathDetail() {
   const { id } = useLocalSearchParams<{ id: string }>();
   const router = useRouter();
   const insets = useSafeAreaInsets();
-  const scrollRef = useRef<ScrollView>(null);
+  const { data: path, isLoading, error, refetch } = useEducationPath(id!);
 
-  const path = useMemo(
-    () => mockPaths.find((p) => p.id === id),
-    [id],
-  );
-
-  if (!path) {
+  if (isLoading) {
     return (
-      <View style={styles.centered}>
-        <Text style={styles.errorText}>Parcours introuvable</Text>
-        <Pressable onPress={() => router.back()}>
-          <Text style={styles.backLink}>Retour</Text>
-        </Pressable>
+      <View style={[styles.container, { paddingTop: insets.top }]}>
+        <BackLink onPress={() => router.back()} />
+        <View style={styles.scroll}>
+          <View style={styles.scrollContent}>
+            <SkeletonCard />
+            <SkeletonCard />
+            <SkeletonCard />
+            <SkeletonCard />
+          </View>
+        </View>
       </View>
     );
   }
 
-  const nextLessonIndex = path.lessons.findIndex(
-    (l) => l.status === "available",
-  );
+  if (error) {
+    return (
+      <View style={[styles.container, { paddingTop: insets.top }]}>
+        <BackLink onPress={() => router.back()} />
+        <ErrorState onRetry={refetch} />
+      </View>
+    );
+  }
 
-  const handleLessonPress = (lessonId: string) => {
+  if (!path) {
+    return (
+      <View style={[styles.container, { paddingTop: insets.top }]}>
+        <BackLink onPress={() => router.back()} />
+        <View style={styles.centered}>
+          <Text style={styles.errorText}>Parcours introuvable</Text>
+        </View>
+      </View>
+    );
+  }
+
+  const completedCount = path.lessons.filter((l) => l.status === "completed").length;
+  const lessonCount = path.lessons.length;
+  const progress = lessonCount > 0 ? (completedCount / lessonCount) * 100 : 0;
+
+  const handleLesson = (lessonId: string) => {
     router.push(`/education/lesson/${path.id}_${lessonId}` as any);
   };
 
   return (
     <View style={[styles.container, { paddingTop: insets.top }]}>
-      <View style={styles.header}>
-        <Pressable
-          onPress={() => router.back()}
-          style={({ pressed }) => [
-            styles.backBtn,
-            pressed && { opacity: 0.7 },
-          ]}
-        >
-          <ArrowLeft size={22} color={tokens.onSurface} />
-        </Pressable>
-        <Text style={styles.headerTitle}>{path.title}</Text>
-        <View style={styles.backBtn} />
-      </View>
+      <BackLink onPress={() => router.back()} />
 
       <ScrollView
-        ref={scrollRef}
         style={styles.scroll}
         contentContainerStyle={styles.scrollContent}
         showsVerticalScrollIndicator={false}
       >
-        <Text style={styles.description}>{path.description}</Text>
-
-        <View style={styles.stats}>
-          <View style={styles.stat}>
-            <Clock size={16} color={tokens.onSurfaceVariant} />
-            <Text style={styles.statText}>{path.estimatedTime}</Text>
+        <View style={styles.header}>
+          <BookOpen size={36} color={tokens.accent} />
+          <View style={styles.headerTitles}>
+            <Text style={styles.pathTitle}>{path.title}</Text>
+            <Text style={styles.pathDesc}>{path.description}</Text>
           </View>
-          <View style={styles.statDot} />
-          <Text style={styles.statText}>
-            {path.lessonCount} leçons
-          </Text>
+          <PathBadge category={path.category} />
         </View>
 
-        <ProgressBar progress={path.progress} color={path.color} />
+        <View style={styles.progRow}>
+          <Text style={styles.progLabel}>
+            Progression {completedCount}/{lessonCount} leçons
+          </Text>
+          <View style={styles.barBg}>
+            <View
+              style={[
+                styles.barFill,
+                {
+                  width: `${Math.min(100, Math.max(0, progress))}%`,
+                },
+              ]}
+            />
+          </View>
+        </View>
+
+        <Text style={styles.lessonsTitle}>Leçons</Text>
 
         <View style={styles.lessonsList}>
           {path.lessons.map((lesson, i) => (
-            <View key={lesson.id}>
-              <LessonItem
-                lesson={lesson}
-                onPress={() => handleLessonPress(lesson.id)}
-              />
-              {i < path.lessons.length - 1 && (
-                <View
-                  style={[
-                    styles.connector,
-                    lesson.status === "completed"
-                      ? { backgroundColor: tokens.accent }
-                      : { backgroundColor: tokens.surfaceDim },
-                  ]}
-                />
-              )}
-            </View>
+            <LessonItem
+              key={lesson.id}
+              lesson={lesson}
+              index={i}
+              hasQuiz={!!lesson.quiz}
+              active={lesson.status === "available"}
+              onPress={() => handleLesson(lesson.id)}
+            />
           ))}
         </View>
       </ScrollView>
@@ -110,38 +123,11 @@ const styles = StyleSheet.create({
     backgroundColor: tokens.background,
     alignItems: "center",
     justifyContent: "center",
-    gap: 12,
   },
   errorText: {
     fontSize: 16,
     color: tokens.onSurfaceVariant,
     fontFamily: "DMSans_500Medium",
-  },
-  backLink: {
-    fontSize: 14,
-    color: tokens.accent,
-    fontFamily: "DMSans_500Medium",
-  },
-  header: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
-    paddingHorizontal: 16,
-    paddingVertical: 12,
-  },
-  backBtn: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
-    backgroundColor: tokens.surface,
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  headerTitle: {
-    fontSize: 17,
-    fontWeight: "600",
-    color: tokens.onSurface,
-    fontFamily: "DMSans_600SemiBold",
   },
   scroll: {
     flex: 1,
@@ -151,40 +137,56 @@ const styles = StyleSheet.create({
     paddingBottom: 120,
     gap: 16,
   },
-  description: {
-    fontSize: 14,
-    color: tokens.onSurfaceVariant,
-    lineHeight: 20,
-    fontFamily: "DMSans_400Regular",
-  },
-  stats: {
+  header: {
     flexDirection: "row",
-    alignItems: "center",
-    gap: 8,
+    alignItems: "flex-start",
+    gap: 12,
   },
-  stat: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 6,
+  headerTitles: {
+    flex: 1,
+    gap: 4,
   },
-  statText: {
-    fontSize: 13,
+  pathTitle: {
+    fontSize: 20,
+    fontWeight: "600",
+    color: tokens.onSurface,
+    fontFamily: "DMSans_600SemiBold",
+  },
+  pathDesc: {
+    fontSize: 11,
+    fontWeight: "500",
     color: tokens.onSurfaceVariant,
-    fontFamily: "DMSans_400Regular",
+    fontFamily: "DMSans_500Medium",
+    lineHeight: 16,
   },
-  statDot: {
-    width: 3,
-    height: 3,
-    borderRadius: 1.5,
-    backgroundColor: tokens.outline,
+  progRow: {
+    gap: 12,
+  },
+  progLabel: {
+    fontSize: 12,
+    fontWeight: "500",
+    color: tokens.onSurfaceVariant,
+    fontFamily: "DMSans_500Medium",
+  },
+  barBg: {
+    height: 8,
+    borderRadius: 4,
+    backgroundColor: tokens.surfaceDim,
+    overflow: "hidden",
+  },
+  barFill: {
+    height: 8,
+    borderRadius: 4,
+    backgroundColor: tokens.accent,
+  },
+  lessonsTitle: {
+    fontSize: 15,
+    fontWeight: "600",
+    color: tokens.onSurface,
+    fontFamily: "DMSans_600SemiBold",
+    marginTop: 8,
   },
   lessonsList: {
-    gap: 0,
-    paddingTop: 8,
-  },
-  connector: {
-    width: 2,
-    height: 16,
-    marginLeft: 35,
+    gap: 8,
   },
 });

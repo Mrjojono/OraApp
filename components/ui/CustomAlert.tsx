@@ -12,6 +12,7 @@ import Animated, {
   useAnimatedStyle,
   withTiming,
 } from "react-native-reanimated";
+import { AlertTriangle, Info, CheckCircle, XCircle } from "lucide-react-native";
 import { tokens } from "@/lib/tokens";
 
 export interface AlertButton {
@@ -24,6 +25,7 @@ export interface AlertConfig {
   title: string;
   message?: string;
   buttons?: AlertButton[];
+  severity?: "info" | "warning" | "destructive" | "success";
 }
 
 type InternalConfig = AlertConfig & { resolve: (index: number) => void };
@@ -36,14 +38,29 @@ export function showAlert(config: AlertConfig) {
   });
 }
 
+const severityIcons = {
+  info: Info,
+  warning: AlertTriangle,
+  destructive: XCircle,
+  success: CheckCircle,
+};
+
+const severityColors: Record<string, string> = {
+  info: tokens.accent,
+  warning: tokens.warning,
+  destructive: tokens.negative,
+  success: tokens.positive,
+};
+
 export default function CustomAlert() {
   const [config, setConfig] = useState<InternalConfig | null>(null);
   const [visible, setVisible] = useState(false);
   const backdropOpacity = useSharedValue(0);
   const dialogScale = useSharedValue(0.9);
 
-  const isDestructible =
-    config?.buttons?.some((b) => b.style === "destructive") ?? false;
+  const severity = config?.severity ?? "info";
+  const Icon = severityIcons[severity] || severityIcons.info;
+  const iconColor = severityColors[severity] || severityColors.info;
 
   const show = useCallback((cfg: InternalConfig) => {
     setConfig(cfg);
@@ -90,23 +107,22 @@ export default function CustomAlert() {
     transform: [{ scale: dialogScale.value }],
   }));
 
-  const buttonStyle = (b: AlertButton) => {
-    if (b.style === "destructive") return styles.btnDestructiveText;
-    if (b.style === "cancel") return styles.btnCancelText;
-    return styles.btnDefaultText;
-  };
-
   return (
     <Modal transparent visible={visible} onRequestClose={() => hide(-1)}>
       <Animated.View style={[styles.backdrop, backdropStyle]}>
         <Pressable style={StyleSheet.absoluteFill} onPress={() => hide(-1)} />
         <Animated.View style={[styles.dialog, dialogStyle]}>
+          <View style={[styles.iconWrap, { backgroundColor: iconColor + "18" }]}>
+            <Icon size={24} color={iconColor} />
+          </View>
+
           {!!config?.title && (
             <Text style={styles.title}>{config.title}</Text>
           )}
           {!!config?.message && (
             <Text style={styles.message}>{config.message}</Text>
           )}
+
           {config?.buttons && config.buttons.length > 0 && (
             <View style={styles.btnRow}>
               {config.buttons.map((b, i) => (
@@ -119,11 +135,17 @@ export default function CustomAlert() {
                   style={({ pressed }) => [
                     styles.btn,
                     b.style === "cancel" && styles.btnCancel,
+                    b.style === "destructive" && styles.btnDestructive,
                     pressed && styles.btnPressed,
-                    i > 0 && styles.btnBorder,
                   ]}
                 >
-                  <Text style={[styles.btnText, buttonStyle(b)]}>
+                  <Text
+                    style={[
+                      styles.btnText,
+                      b.style === "destructive" && styles.btnDestructiveText,
+                      b.style === "cancel" && styles.btnCancelText,
+                    ]}
+                  >
                     {b.text}
                   </Text>
                 </Pressable>
@@ -147,17 +169,28 @@ const styles = StyleSheet.create({
   dialog: {
     width: "100%",
     backgroundColor: tokens.surface,
-    borderRadius: 14,
+    borderRadius: 16,
     borderWidth: 1,
     borderColor: tokens.outline,
-    padding: 24,
-    gap: 8,
+    padding: 28,
+    paddingTop: 24,
+    alignItems: "center",
+    gap: 6,
+  },
+  iconWrap: {
+    width: 48,
+    height: 48,
+    borderRadius: 14,
+    alignItems: "center",
+    justifyContent: "center",
+    marginBottom: 8,
   },
   title: {
     fontSize: 17,
     fontWeight: "600",
     color: tokens.onSurface,
     textAlign: "center",
+    fontFamily: "DMSans_600SemiBold",
   },
   message: {
     fontSize: 14,
@@ -165,38 +198,42 @@ const styles = StyleSheet.create({
     color: tokens.onSurfaceVariant,
     textAlign: "center",
     lineHeight: 20,
+    fontFamily: "DMSans_400Regular",
     marginTop: 4,
   },
   btnRow: {
     flexDirection: "row",
-    marginTop: 16,
-    gap: 8,
+    marginTop: 20,
+    gap: 10,
+    width: "100%",
   },
   btn: {
     flex: 1,
-    height: 44,
-    borderRadius: 10,
+    height: 48,
+    borderRadius: 12,
     alignItems: "center",
     justifyContent: "center",
+    backgroundColor: tokens.accent + "18",
   },
   btnCancel: {
-    backgroundColor: tokens.accentContainer,
+    backgroundColor: tokens.surface,
+    borderWidth: 1,
+    borderColor: tokens.outline,
+  },
+  btnDestructive: {
+    backgroundColor: "#FF453A18",
   },
   btnPressed: {
     opacity: 0.7,
   },
-  btnBorder: {
-    borderLeftWidth: 0,
-  },
   btnText: {
     fontSize: 15,
     fontWeight: "600",
-  },
-  btnDefaultText: {
     color: tokens.accent,
+    fontFamily: "DMSans_600SemiBold",
   },
   btnCancelText: {
-    color: tokens.accent,
+    color: tokens.onSurfaceVariant,
   },
   btnDestructiveText: {
     color: tokens.negative,

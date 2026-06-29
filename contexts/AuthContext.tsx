@@ -20,6 +20,7 @@ import {
   unregisterFromPushNotifications,
 } from "@/services/push";
 import { notificationSocket } from "@/services/socket";
+import { initSocketToStore } from "@/stores/notificationStore";
 
 export interface User {
   id: string;
@@ -68,7 +69,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       const res = await api.get("/auth/me");
       const user = res.data?.user ?? res.data;
       await saveUser(user);
-      if (token) notificationSocket.connect(token);
+      if (token) {
+        notificationSocket.connect(token);
+        initSocketToStore();
+      }
       setState({
         user,
         isLoading: false,
@@ -110,6 +114,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         await setTokens(accessToken, refreshToken);
         await saveUser(user);
         notificationSocket.connect(accessToken);
+        initSocketToStore();
         setState({
           user,
           isLoading: false,
@@ -135,6 +140,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       await setTokens(accessToken, refreshToken);
       await saveUser(user);
       notificationSocket.connect(accessToken);
+      initSocketToStore();
       setState({
         user,
         isLoading: false,

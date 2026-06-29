@@ -26,8 +26,8 @@ const TabIcon = ({
 }) => (
   <View
     style={{
-      width: 70,
-      height: 44,
+      width: 55,
+      height: 45,
       borderRadius: 9,
       marginBottom: 10,
       alignItems: "center",
@@ -54,19 +54,18 @@ export const tabs: AppTab[] = [
       <TabIcon focused={focused} color={color} icon={Banknote} />
     ),
   },
-
-  {
-    name: "score",
-    title: "Score",
-    icon: ({ focused, color }) => (
-      <TabIcon focused={focused} color={color} icon={Star} />
-    ),
-  },
   {
     name: "education",
     title: "Education",
     icon: ({ focused, color }) => (
       <TabIcon focused={focused} color={color} icon={BookOpen} />
+    ),
+  },
+  {
+    name: "score",
+    title: "Score",
+    icon: ({ focused, color }) => (
+      <TabIcon focused={focused} color={color} icon={Star} />
     ),
   },
   {

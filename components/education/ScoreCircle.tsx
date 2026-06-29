@@ -1,4 +1,5 @@
 import { View, Text, StyleSheet } from "react-native";
+import Svg, { Circle as SvgCircle } from "react-native-svg";
 import { tokens } from "@/lib/tokens";
 
 interface Props {
@@ -16,33 +17,29 @@ export function ScoreCircle({ score, size = 120, strokeWidth = 6 }: Props) {
 
   return (
     <View style={[styles.container, { width: size, height: size }]}>
-      <View
-        style={[
-          styles.circle,
-          {
-            width: size,
-            height: size,
-            borderRadius: size / 2,
-            borderWidth: strokeWidth,
-            borderColor: tokens.surfaceDim,
-          },
-        ]}
-      />
-      <View
-        style={[
-          styles.fillCircle,
-          {
-            width: size,
-            height: size,
-            borderRadius: size / 2,
-            borderWidth: strokeWidth,
-            borderColor: color,
-            borderLeftColor: "transparent",
-            borderBottomColor: "transparent",
-          },
-          { transform: [{ rotate: `${(clamped / 100) * 360}deg` }] },
-        ]}
-      />
+      <Svg width={size} height={size}>
+        <SvgCircle
+          cx={size / 2}
+          cy={size / 2}
+          r={radius}
+          stroke={tokens.surfaceDim}
+          strokeWidth={strokeWidth}
+          fill="none"
+        />
+        <SvgCircle
+          cx={size / 2}
+          cy={size / 2}
+          r={radius}
+          stroke={color}
+          strokeWidth={strokeWidth}
+          fill="none"
+          strokeDasharray={circumference}
+          strokeDashoffset={offset}
+          strokeLinecap="round"
+          rotation="-90"
+          origin={`${size / 2}, ${size / 2}`}
+        />
+      </Svg>
       <View style={styles.textWrap}>
         <Text style={[styles.scoreText, { color }]}>{Math.round(clamped)}%</Text>
       </View>
@@ -55,13 +52,8 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
   },
-  circle: {
-    position: "absolute",
-  },
-  fillCircle: {
-    position: "absolute",
-  },
   textWrap: {
+    position: "absolute",
     alignItems: "center",
     justifyContent: "center",
   },
